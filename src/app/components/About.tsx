@@ -1,4 +1,34 @@
+import { useEffect, useRef } from "react";
+
 export function About() {
+  const mapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let map: import("leaflet").Map | null = null;
+
+    import("leaflet").then((L) => {
+      if (!mapRef.current) return;
+      if ((mapRef.current as HTMLDivElement & { _leaflet_id?: number })._leaflet_id) return;
+
+      map = L.map(mapRef.current, {
+        center: [43.5, 43.8],
+        zoom: 6,
+        zoomControl: false,
+        attributionControl: false,
+        scrollWheelZoom: false,
+        dragging: true,
+      });
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+      }).addTo(map);
+    });
+
+    return () => {
+      map?.remove();
+    };
+  }, []);
+
   return (
     <section id="about" className="py-40 bg-white">
       <div className="max-w-[1440px] mx-auto px-8">
@@ -18,32 +48,27 @@ export function About() {
             ))}
           </div>
         </div>
-        {/* Topographic / aerial map visualization */}
+
+        {/* North Caucasus map */}
         <div className="mt-32 rounded-sm overflow-hidden h-[500px] relative bg-slate-950">
-          {/* Grid */}
-          <div className="absolute inset-0 opacity-15" style={{
-            backgroundImage: 'linear-gradient(rgba(148,163,184,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.6) 1px, transparent 1px)',
-            backgroundSize: '60px 60px'
+          {/* Leaflet map container */}
+          <div
+            ref={mapRef}
+            className="absolute inset-0 w-full h-full"
+            style={{ filter: 'invert(1) hue-rotate(200deg) saturate(0.6) brightness(0.5)' }}
+          />
+          {/* Dark vignette edges */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            boxShadow: 'inset 0 0 80px 40px rgba(2,6,23,0.9)'
           }} />
-          {/* Topographic contour lines */}
-          <svg className="absolute inset-0 w-full h-full opacity-25" viewBox="0 0 1200 500" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,350 C150,320 250,380 400,300 C550,220 650,260 800,200 C950,140 1050,180 1200,150" stroke="#60a5fa" strokeWidth="1.5"/>
-            <path d="M0,380 C150,350 250,410 400,330 C550,250 650,290 800,230 C950,170 1050,210 1200,180" stroke="#60a5fa" strokeWidth="1"/>
-            <path d="M0,410 C150,380 250,440 400,360 C550,280 650,320 800,260 C950,200 1050,240 1200,210" stroke="#60a5fa" strokeWidth="1"/>
-            <path d="M0,440 C150,410 250,470 400,390 C550,310 650,350 800,290 C950,230 1050,270 1200,240" stroke="#60a5fa" strokeWidth="0.8"/>
-            <path d="M0,300 C200,270 350,320 500,240 C650,160 780,210 950,160 C1050,130 1130,150 1200,130" stroke="#93c5fd" strokeWidth="1.5"/>
-            <path d="M0,270 C200,240 350,290 500,210 C650,130 780,180 950,130 C1050,100 1130,120 1200,100" stroke="#93c5fd" strokeWidth="1"/>
-          </svg>
           {/* Blue gradient overlay from left */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-950/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-950/60 via-transparent to-transparent pointer-events-none" />
           {/* Stats overlay text */}
-          <div className="absolute bottom-10 left-10 font-mono text-xs text-blue-300/60 space-y-1">
+          <div className="absolute bottom-10 left-10 font-mono text-xs text-blue-300/70 space-y-1 pointer-events-none">
             <div>РЕГИОН: СКФО / ЮФО</div>
             <div>ТОЧНОСТЬ: 1 СМ/ПКС</div>
             <div>ПОКРЫТИЕ: 99.7%</div>
           </div>
-          {/* Right side subtle glow */}
-          <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-blue-900/20 to-transparent" />
         </div>
       </div>
     </section>

@@ -86,8 +86,8 @@ export function Contact() {
         )}
 
         <div className="mt-40 pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between text-white/40 font-bold uppercase tracking-widest text-xs">
-          <div>Email: info@dronesolutions.ru</div>
-          <div>Тел: +7 (928) 000-00-00 · Ставрополь, СКФО</div>
+          <div>Email: p0p0vk@yandex.ru</div>
+          <div>Тел: +7 (988) 763-59-27 · пр. Кулакова 2, Ставрополь</div>
         </div>
       </div>
     </section>
