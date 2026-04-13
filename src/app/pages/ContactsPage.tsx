@@ -1,16 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import emailjs from "@emailjs/browser";
 
-// ─────────────────────────────────────────────────────────────
-// EmailJS config — зарегистрируйся на https://www.emailjs.com,
-// создай Service, Template и вставь свои ID ниже.
-// ─────────────────────────────────────────────────────────────
+
 const EMAILJS_SERVICE_ID  = "YOUR_SERVICE_ID";   // ← заменить
 const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";  // ← заменить
 const EMAILJS_PUBLIC_KEY  = "YOUR_PUBLIC_KEY";   // ← заменить
 
-// В шаблоне EmailJS используй переменные:
-// {{from_name}}, {{from_phone}}, {{from_email}}, {{service}}, {{message}}
 
 const faqs = [
   { q: "Как заказать съёмку?", a: "Оставьте заявку на сайте или позвоните нам. Свяжемся в течение 2 часов, уточним задачу и согласуем дату вылета." },
@@ -21,7 +16,7 @@ const faqs = [
   { q: "Каков минимальный заказ?", a: "Минимальный заказ — 1 вылет (2 часа). Для крупных проектов предусмотрены пакетные условия." },
 ];
 
-// Координаты: Ставрополь, пр. Кулакова 2
+
 const MAP_LAT = 45.0371;
 const MAP_LNG = 41.9504;
 

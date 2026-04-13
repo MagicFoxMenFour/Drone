@@ -5,10 +5,8 @@ import { motion, AnimatePresence } from "motion/react";
 const navLinks = [
   { href: "/services", label: "Услуги" },
   { href: "/cases", label: "Кейсы" },
-  { href: "/fleet", label: "Флот" },
   { href: "/about", label: "О нас" },
   { href: "/blog", label: "Блог" },
-  { href: "/pricing", label: "Цены" },
 ];
 
 export function Header() {

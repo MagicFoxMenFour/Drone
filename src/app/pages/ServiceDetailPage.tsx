@@ -127,12 +127,6 @@ export function ServiceDetailPage() {
             >
               Оставить заявку
             </Link>
-            <Link
-              to="/pricing"
-              className="px-10 py-5 border border-white/30 text-white rounded-full text-lg font-bold hover:bg-white/10 transition-colors text-center"
-            >
-              Посмотреть цены
-            </Link>
           </div>
         </div>
       </section>

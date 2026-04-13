@@ -204,8 +204,8 @@ export function AboutPage() {
             <Link to="/contacts" className="px-10 py-5 bg-blue-600 text-white rounded-full text-lg font-bold hover:bg-blue-500 transition-colors">
               Контакты
             </Link>
-            <Link to="/fleet" className="px-10 py-5 border border-white/30 text-white rounded-full text-lg font-bold hover:bg-white/10 transition-colors">
-              Наш флот
+            <Link to="/blog" className="px-10 py-5 border border-white/30 text-white rounded-full text-lg font-bold hover:bg-white/10 transition-colors">
+              Блог
             </Link>
           </div>
         </div>

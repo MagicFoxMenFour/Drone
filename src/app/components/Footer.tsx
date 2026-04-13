@@ -11,7 +11,6 @@ const services = [
 
 const company = [
   { href: "/about", label: "О компании" },
-  { href: "/fleet", label: "Флот и оборудование" },
   { href: "/cases", label: "Кейсы" },
   { href: "/blog", label: "Блог" },
 ];
