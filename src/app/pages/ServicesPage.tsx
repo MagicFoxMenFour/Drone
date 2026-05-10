@@ -2,21 +2,13 @@ import { Link } from "react-router";
 import { services } from "../data/services";
 
 const colorMap: Record<string, string> = {
-  blue: "bg-blue-50 border-blue-100 hover:border-blue-300",
-  indigo: "bg-indigo-50 border-indigo-100 hover:border-indigo-300",
-  amber: "bg-amber-50 border-amber-100 hover:border-amber-300",
-  green: "bg-green-50 border-green-100 hover:border-green-300",
-  red: "bg-red-50 border-red-100 hover:border-red-300",
-  slate: "bg-slate-50 border-slate-200 hover:border-slate-400",
+  cyan: "bg-cyan-50 border-cyan-100 hover:border-cyan-300",
+  orange: "bg-orange-50 border-orange-100 hover:border-orange-300",
 };
 
 const accentMap: Record<string, string> = {
-  blue: "text-blue-600",
-  indigo: "text-indigo-600",
-  amber: "text-amber-600",
-  green: "text-green-600",
-  red: "text-red-600",
-  slate: "text-slate-600",
+  cyan: "text-cyan-600",
+  orange: "text-orange-600",
 };
 
 export function ServicesPage() {
@@ -30,8 +22,7 @@ export function ServicesPage() {
             Услуги
           </h1>
           <p className="text-xl text-slate-500 font-medium max-w-2xl leading-relaxed">
-            Полный спектр БПЛА-сервисов для бизнеса и государственных структур Северного Кавказа.
-            Работаем во всех регионах СКФО и ЮФО с 2021 года.
+            Разработка ПО для робототехнических систем и контрактное производство электроники — мелкосерийный SMT-монтаж с обязательным тестированием плат.
           </p>
         </div>
       </section>
@@ -39,7 +30,7 @@ export function ServicesPage() {
       {/* Services grid */}
       <section className="bg-slate-50 py-24">
         <div className="max-w-[1440px] mx-auto px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             {services.map((s) => (
               <Link
                 key={s.slug}
@@ -54,11 +45,11 @@ export function ServicesPage() {
                   {s.title}
                 </h2>
                 <p className="text-slate-500 font-medium leading-relaxed mb-6">{s.shortDesc}</p>
-                <div className="flex gap-4 mb-6">
+                <div className="flex flex-wrap gap-x-4 gap-y-3 mb-6">
                   {s.results.map((r, i) => (
-                    <div key={i} className="border-l-2 border-slate-200 pl-3">
-                      <div className="text-lg font-bold text-slate-950">{r.v}</div>
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{r.l}</div>
+                    <div key={i} className="border-l-2 border-slate-200 pl-3 min-w-0 max-w-full">
+                      <div className="text-lg font-bold text-slate-950 break-words">{r.v}</div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest break-words">{r.l}</div>
                     </div>
                   ))}
                 </div>
@@ -84,10 +75,10 @@ export function ServicesPage() {
           <h2 className="text-6xl lg:text-8xl font-medium tracking-tighter text-slate-950 mb-20">Почему мы</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
             {[
-              { t: "Лицензия Росавиации", d: "Все полеты согласованы. Вам не нужно самостоятельно оформлять разрешения." },
-              { t: "Точность RTK", d: "Оборудование с RTK-коррекцией обеспечивает точность до 1 см без наземных меток." },
-              { t: "Кавказский опыт", d: "5 лет работы в горном рельефе, при ветре и на высотах до 4000 м над уровнем моря." },
-              { t: "Полный цикл", d: "От съемки до готового продукта: отчёт, 3D-модель, видео, карты предписаний." },
+              { t: "Инженерная глубина", d: "От ТЗ и архитектуры до интеграции на железе: C++, Python, ROS 2, встраиваемые системы." },
+              { t: "Контроль серии", d: "Профили пайки фиксируем регистратором; каждая плата проходит функциональный тест перед отгрузкой." },
+              { t: "Гибкий тираж", d: "Опытные партии и мелкая серия — от единичных образцов до сотен плат в месяц." },
+              { t: "Документация", d: "Передаём код, схемы, отчёты по тестам и технические описания под ваш внутренний контур качества." },
             ].map((item, i) => (
               <div key={i} className="border-t-2 border-blue-600 pt-8">
                 <h3 className="text-xl font-bold text-slate-950 mb-4">{item.t}</h3>

@@ -14,7 +14,7 @@ export function BlogPage() {
             Блог
           </h1>
           <p className="text-xl text-slate-500 font-medium max-w-2xl leading-relaxed">
-            Практические статьи о БПЛА-технологиях, картографии, агромониторинге и инспекции от команды Citrix.
+            Материалы о разработке ПО для робототехники и БПЛА, SMT-монтаже и инженерных практиках.
           </p>
         </div>
       </section>

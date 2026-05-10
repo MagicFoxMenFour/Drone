@@ -36,11 +36,11 @@ export function About() {
           <div className="lg:w-1/2">
             <h2 className="text-7xl lg:text-8xl font-medium tracking-tighter text-slate-950 leading-[0.9] mb-12">Видим <br />больше</h2>
             <p className="text-2xl text-slate-500 font-medium leading-relaxed max-w-xl">
-              Мы работаем на Северном Кавказе с 2021 года — от Ставрополья до Дагестана. Дроны там, где человек не может или не должен быть.
+              Разработка ПО для робототехники и производство электроники на Северном Кавказе — от прототипа до мелкой серии.
             </p>
           </div>
           <div className="lg:w-1/2 grid grid-cols-2 gap-12 border-l border-slate-100 pl-8 lg:pl-20">
-            {[ {l:"Опыт", v:"5+ лет"}, {l:"Проектов", v:"200+"}, {l:"Точность", v:"1 см"}, {l:"Флот", v:"15 ед."} ].map((s, i) => (
+            {[ {l:"Опыт", v:"5+ лет"}, {l:"Проектов", v:"200+"}, {l:"Тест плат", v:"100%"}, {l:"Шаг SMT", v:"0.4 мм"} ].map((s, i) => (
               <div key={i}>
                 <div className="text-5xl font-bold text-blue-600 tracking-tighter">{s.v}</div>
                 <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">{s.l}</div>
@@ -66,7 +66,7 @@ export function About() {
           {/* Stats overlay text */}
           <div className="absolute bottom-10 left-10 font-mono text-xs text-blue-300/70 space-y-1 pointer-events-none">
             <div>РЕГИОН: СКФО / ЮФО</div>
-            <div>ТОЧНОСТЬ: 1 СМ/ПКС</div>
+            <div>КОНТРОЛЬ: 100% ТЕСТ ПЛАТ</div>
             <div>ПОКРЫТИЕ: 99.7%</div>
           </div>
         </div>

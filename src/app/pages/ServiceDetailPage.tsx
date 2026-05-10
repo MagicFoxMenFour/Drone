@@ -31,11 +31,11 @@ export function ServiceDetailPage() {
               <div className="bg-slate-50 border border-slate-200 p-8">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Стоимость</p>
                 <p className="text-3xl font-bold text-blue-600 mb-8">{service.price}</p>
-                <div className="grid grid-cols-3 gap-4 border-t border-slate-200 pt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-5 gap-y-6 border-t border-slate-200 pt-8">
                   {service.results.map((r, i) => (
-                    <div key={i}>
-                      <div className="text-2xl font-bold text-slate-950 tracking-tight">{r.v}</div>
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{r.l}</div>
+                    <div key={i} className="min-w-0">
+                      <div className="text-xl sm:text-2xl font-bold text-slate-950 tracking-tight break-words">{r.v}</div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 break-words">{r.l}</div>
                     </div>
                   ))}
                 </div>

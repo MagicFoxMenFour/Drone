@@ -7,74 +7,42 @@ import { Testimonials } from "../components/Testimonials";
 
 const services = [
   {
-    slug: "aerial-photography",
-    title: "Аэрофотосъемка",
-    desc: "Съемка горного рельефа, полей и объектов в 8K для застройщиков и туроператоров Кавказа.",
-    icon: "📸",
+    slug: "robotics-software",
+    title: "Разработка ПО для робототехнических систем",
+    desc: "Создание ПО для БПЛА, микроконтроллеров и робототехнических комплексов на C++ и Python.",
+    icon: "💻",
   },
   {
-    slug: "mapping",
-    title: "3D-картография",
-    desc: "Цифровые модели рельефа для проектирования дорог, ГЭС и агрологистики в СКФО.",
-    icon: "🗺",
-  },
-  {
-    slug: "inspection",
-    title: "Инспекция",
-    desc: "Поиск дефектов на ЛЭП, газопроводах и горных сооружениях без подъема людей.",
-    icon: "🔍",
-  },
-  {
-    slug: "agro",
-    title: "Агромониторинг",
-    desc: "Мультиспектральный анализ посевов — стресс-зоны, точечное орошение, рост урожая.",
-    icon: "🌾",
-  },
-  {
-    slug: "thermal",
-    title: "Тепловизионная съемка",
-    desc: "Выявление утечек тепла, дефектов кровли, мест перегрева оборудования.",
-    icon: "🌡",
-  },
-  {
-    slug: "monitoring",
-    title: "Охрана периметра",
-    desc: "Автономное патрулирование объектов, границ и водоемов в режиме 24/7.",
-    icon: "🛡",
+    slug: "pcb-assembly",
+    title: "Монтаж печатных плат",
+    desc: "Мелкосерийный SMT-монтаж плат (поверхностный и выводной) с тестированием каждой платы.",
+    icon: "🔧",
   },
 ];
 
 const stats = [
   { v: "5+", l: "лет опыта" },
   { v: "200+", l: "проектов" },
-  { v: "1 см", l: "точность" },
-  { v: "15", l: "единиц флота" },
+  { v: "0.4 мм", l: "шаг SMT" },
+  { v: "100%", l: "тест плат" },
 ];
 
 const cases = [
   {
-    slug: "stavropol-3d",
-    category: "Картография",
-    title: "Ставрополь 3D",
-    desc: "Цифровой двойник промзоны площадью 280 км² для проектирования транспортных развязок.",
-    stats: [{ v: "280 км²", l: "площадь" }, { v: "1 см", l: "точность" }],
+    slug: "smt-montazh",
+    category: "Производство",
+    title: "SMT-монтаж платы: 300 шт. за 15 дней",
+    desc: "Изготовление партии плат управления для мониторинга электрооборудования. 0 дефектов.",
+    stats: [{ v: "300", l: "плат" }, { v: "15 дн.", l: "срок" }],
+    accent: "from-red-950 to-slate-900",
+  },
+  {
+    slug: "bpla-webrtc",
+    category: "Разработка",
+    title: "Система управления БПЛА через WebRTC",
+    desc: "Управление БПЛА за пределами прямой видимости с трансляцией видео в реальном времени.",
+    stats: [{ v: "3.5 мес.", l: "срок" }, { v: "4G/5G", l: "связь" }],
     accent: "from-blue-950 to-slate-900",
-  },
-  {
-    slug: "kaspiy-patrol",
-    category: "Мониторинг",
-    title: "Каспий Патруль",
-    desc: "Патрулирование 180 км побережья. Время реакции на загрязнения — 22 минуты вместо 5 часов.",
-    stats: [{ v: "180 км", l: "маршрут" }, { v: "22 мин", l: "реакция" }],
-    accent: "from-cyan-950 to-slate-900",
-  },
-  {
-    slug: "ges-inspect",
-    category: "Энергетика",
-    title: "ГЭС Инспект",
-    desc: "Тепловизионная инспекция ЛЭП Баксанской ГЭС. Выявлено 284 дефекта без риска для людей.",
-    stats: [{ v: "284", l: "дефекта" }, { v: "−45%", l: "стоимость" }],
-    accent: "from-amber-950 to-slate-900",
   },
 ];
 
@@ -153,7 +121,7 @@ export function HomePage() {
           <div className="grid lg:grid-cols-2 gap-12 mt-24 items-end">
             <div className="space-y-6">
               <p className="text-xl lg:text-2xl text-slate-900 font-medium max-w-sm leading-snug">
-                Профессиональные БПЛА-сервисы для агробизнеса, энергетики и строительства на Северном Кавказе.
+                Разработка ПО для робототехники и БПЛА, мелкосерийный монтаж печатных плат — от прототипа до партии.
               </p>
               <div className="flex gap-8 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
                 <div>Работаем по СКФО и ЮФО</div>
@@ -190,7 +158,7 @@ export function HomePage() {
               Все услуги →
             </Link>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 gap-6">
             {services.map((s, i) => (
               <Link
                 key={i}
@@ -221,7 +189,7 @@ export function HomePage() {
               Все проекты →
             </Link>
           </div>
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid lg:grid-cols-2 gap-6">
             {cases.map((c, i) => (
               <Link
                 key={i}
@@ -239,11 +207,11 @@ export function HomePage() {
                 </div>
                 <h3 className="text-2xl font-bold text-slate-950 tracking-tight mb-2 group-hover:text-blue-600 transition-colors">{c.title}</h3>
                 <p className="text-slate-500 font-medium text-sm leading-relaxed mb-4">{c.desc}</p>
-                <div className="flex gap-6">
+                <div className="flex flex-wrap gap-x-6 gap-y-2">
                   {c.stats.map((s, j) => (
-                    <div key={j}>
-                      <div className="text-lg font-bold text-slate-950">{s.v}</div>
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{s.l}</div>
+                    <div key={j} className="min-w-0">
+                      <div className="text-lg font-bold text-slate-950 break-words">{s.v}</div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest break-words">{s.l}</div>
                     </div>
                   ))}
                 </div>

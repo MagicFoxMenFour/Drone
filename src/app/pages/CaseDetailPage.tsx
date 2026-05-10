@@ -53,11 +53,11 @@ export function CaseDetailPage() {
       {/* Stats */}
       <section className="bg-slate-950 py-16">
         <div className="max-w-[1440px] mx-auto px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8">
             {caseItem.results.map((r, i) => (
-              <div key={i}>
-                <div className="text-4xl lg:text-5xl font-bold text-blue-400 tracking-tighter">{r.v}</div>
-                <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-2">{r.l}</div>
+              <div key={i} className="min-w-0">
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-400 tracking-tighter break-words">{r.v}</div>
+                <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-2 break-words">{r.l}</div>
               </div>
             ))}
           </div>

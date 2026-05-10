@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { cases } from "../data/cases";
 
-const categories = ["Все", "Картография", "Мониторинг", "Энергетика", "Агро", "Недвижимость"];
+const categories = ["Все", "Производство", "Разработка"];
 
 export function CasesPage() {
   const [active, setActive] = useState("Все");
@@ -18,7 +18,7 @@ export function CasesPage() {
             Проекты
           </h1>
           <p className="text-xl text-slate-500 font-medium max-w-2xl leading-relaxed">
-            Реальные задачи бизнеса, государственных структур и аграриев Северного Кавказа, решённые с помощью БПЛА.
+            Производство электроники и разработка программного обеспечения для робототехники и БПЛА.
           </p>
         </div>
       </section>
@@ -68,11 +68,11 @@ export function CasesPage() {
                     {c.title}
                   </h2>
                   <p className="text-slate-500 font-medium text-sm leading-relaxed mb-5">{c.shortDesc}</p>
-                  <div className="flex gap-5 border-t border-slate-100 pt-5">
+                  <div className="flex flex-wrap gap-x-5 gap-y-3 border-t border-slate-100 pt-5">
                     {c.results.slice(0, 3).map((r, i) => (
-                      <div key={i}>
-                        <div className="text-base font-bold text-slate-950">{r.v}</div>
-                        <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{r.l}</div>
+                      <div key={i} className="min-w-0 max-w-[45%] sm:max-w-none">
+                        <div className="text-base font-bold text-slate-950 break-words">{r.v}</div>
+                        <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest break-words">{r.l}</div>
                       </div>
                     ))}
                   </div>
