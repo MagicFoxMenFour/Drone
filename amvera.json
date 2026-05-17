@@ -1,0 +1,61 @@
+{
+  "name": "Drone Site",
+  "description": "Professional drone services website with admin panel",
+  "build": {
+    "enabled": true,
+    "buildCommand": "npm install && npm run build",
+    "artifactPath": "dist"
+  },
+  "env": [
+    {
+      "name": "ADMIN_LOGIN",
+      "value": "admin",
+      "comment": "Admin panel login"
+    },
+    {
+      "name": "ADMIN_PASSWORD",
+      "value": "",
+      "comment": "Admin panel password (change this!)"
+    },
+    {
+      "name": "ADMIN_SESSION_SECRET",
+      "value": "",
+      "comment": "Session secret (generate random string)"
+    },
+    {
+      "name": "GITHUB_OWNER",
+      "value": "",
+      "comment": "Your GitHub username"
+    },
+    {
+      "name": "GITHUB_REPO",
+      "value": "",
+      "comment": "Your repository name"
+    },
+    {
+      "name": "GITHUB_TOKEN",
+      "value": "",
+      "comment": "GitHub Personal Access Token"
+    },
+    {
+      "name": "GITHUB_CONTENT_BRANCH",
+      "value": "content",
+      "comment": "Branch for content storage"
+    },
+    {
+      "name": "RESEND_API_KEY",
+      "value": "",
+      "comment": "Resend API key (optional)"
+    },
+    {
+      "name": "RESEND_FROM",
+      "value": "",
+      "comment": "Email sender (e.g., Drone <noreply@yourdomain.com>)"
+    },
+    {
+      "name": "LEADS_TO_EMAIL",
+      "value": "",
+      "comment": "Email to receive leads (optional)"
+    }
+  ]
+}
