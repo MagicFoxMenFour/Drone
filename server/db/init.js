@@ -96,7 +96,7 @@ export async function initializeDatabase() {
       title TEXT,
       description TEXT,
       mission TEXT,
-      values TEXT,
+      "values" TEXT, 
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     )`,
