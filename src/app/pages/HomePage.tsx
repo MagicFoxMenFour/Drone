@@ -1,49 +1,18 @@
 import { Link } from "react-router";
 import { motion } from "motion/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInView } from "motion/react";
 import { FAQ } from "../components/FAQ";
 import { Testimonials } from "../components/Testimonials";
-
-const services = [
-  {
-    slug: "robotics-software",
-    title: "Разработка ПО для робототехнических систем",
-    desc: "Создание ПО для БПЛА, микроконтроллеров и робототехнических комплексов на C++ и Python.",
-    icon: "💻",
-  },
-  {
-    slug: "pcb-assembly",
-    title: "Монтаж печатных плат",
-    desc: "Мелкосерийный SMT-монтаж плат (поверхностный и выводной) с тестированием каждой платы.",
-    icon: "🔧",
-  },
-];
+import type { Case } from "../data/cases";
+import type { Service } from "../data/services";
+import { getCasesList, getServicesList } from "../lib/content";
 
 const stats = [
   { v: "5+", l: "лет опыта" },
   { v: "200+", l: "проектов" },
   { v: "0.4 мм", l: "шаг SMT" },
   { v: "100%", l: "тест плат" },
-];
-
-const cases = [
-  {
-    slug: "smt-montazh",
-    category: "Производство",
-    title: "SMT-монтаж платы: 300 шт. за 15 дней",
-    desc: "Изготовление партии плат управления для мониторинга электрооборудования. 0 дефектов.",
-    stats: [{ v: "300", l: "плат" }, { v: "15 дн.", l: "срок" }],
-    accent: "from-red-950 to-slate-900",
-  },
-  {
-    slug: "bpla-webrtc",
-    category: "Разработка",
-    title: "Система управления БПЛА через WebRTC",
-    desc: "Управление БПЛА за пределами прямой видимости с трансляцией видео в реальном времени.",
-    stats: [{ v: "3.5 мес.", l: "срок" }, { v: "4G/5G", l: "связь" }],
-    accent: "from-blue-950 to-slate-900",
-  },
 ];
 
 function StatCard({ v, l, i }: { v: string; l: string; i: number }) {
@@ -63,6 +32,27 @@ function StatCard({ v, l, i }: { v: string; l: string; i: number }) {
 }
 
 export function HomePage() {
+  const [previewServices, setPreviewServices] = useState<Service[]>([]);
+  const [previewCases, setPreviewCases] = useState<Case[]>([]);
+  const [homeDataReady, setHomeDataReady] = useState(false);
+
+  useEffect(() => {
+    let cancel = false;
+    void (async () => {
+      try {
+        const [sList, cList] = await Promise.all([getServicesList(), getCasesList()]);
+        if (cancel) return;
+        setPreviewServices(sList.slice(0, 2));
+        setPreviewCases(cList.slice(0, 2));
+      } finally {
+        if (!cancel) setHomeDataReady(true);
+      }
+    })();
+    return () => {
+      cancel = true;
+    };
+  }, []);
+
   return (
     <>
       {/* Hero */}
@@ -159,20 +149,26 @@ export function HomePage() {
             </Link>
           </div>
           <div className="grid sm:grid-cols-2 gap-6">
-            {services.map((s, i) => (
-              <Link
-                key={i}
-                to={`/services/${s.slug}`}
-                className="group bg-white border border-slate-100 p-8 hover:border-blue-200 hover:shadow-lg transition-all"
-              >
-                <div className="text-4xl mb-6">{s.icon}</div>
-                <h3 className="text-2xl font-bold text-slate-950 tracking-tight mb-3 group-hover:text-blue-600 transition-colors">{s.title}</h3>
-                <p className="text-slate-500 font-medium leading-relaxed">{s.desc}</p>
-                <div className="mt-6 text-sm font-bold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Подробнее →
-                </div>
-              </Link>
-            ))}
+            {!homeDataReady ? (
+              <p className="text-slate-500 font-medium col-span-full">Загрузка услуг…</p>
+            ) : previewServices.length === 0 ? (
+              <p className="text-slate-500 font-medium col-span-full">Пока нет опубликованных услуг.</p>
+            ) : (
+              previewServices.map((s, i) => (
+                <Link
+                  key={s.slug ?? i}
+                  to={`/services/${s.slug}`}
+                  className="group bg-white border border-slate-100 p-8 hover:border-blue-200 hover:shadow-lg transition-all"
+                >
+                  <div className="text-4xl mb-6">{s.icon}</div>
+                  <h3 className="text-2xl font-bold text-slate-950 tracking-tight mb-3 group-hover:text-blue-600 transition-colors">{s.title}</h3>
+                  <p className="text-slate-500 font-medium leading-relaxed">{s.shortDesc}</p>
+                  <div className="mt-6 text-sm font-bold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Подробнее →
+                  </div>
+                </Link>
+              ))
+            )}
           </div>
           <div className="mt-8 lg:hidden">
             <Link to="/services" className="text-sm font-bold text-blue-600 uppercase tracking-widest">Все услуги →</Link>
@@ -190,33 +186,39 @@ export function HomePage() {
             </Link>
           </div>
           <div className="grid lg:grid-cols-2 gap-6">
-            {cases.map((c, i) => (
-              <Link
-                key={i}
-                to={`/cases/${c.slug}`}
-                className="group block"
-              >
-                <div className={`aspect-video bg-gradient-to-br ${c.accent} mb-5 relative overflow-hidden`}>
-                  <div className="absolute inset-0 opacity-20" style={{
-                    backgroundImage: "linear-gradient(rgba(59,130,246,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.5) 1px, transparent 1px)",
-                    backgroundSize: "40px 40px",
-                  }} />
-                  <div className="absolute inset-0 flex items-end p-6">
-                    <span className="text-xs font-bold text-blue-300 uppercase tracking-widest">{c.category}</span>
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold text-slate-950 tracking-tight mb-2 group-hover:text-blue-600 transition-colors">{c.title}</h3>
-                <p className="text-slate-500 font-medium text-sm leading-relaxed mb-4">{c.desc}</p>
-                <div className="flex flex-wrap gap-x-6 gap-y-2">
-                  {c.stats.map((s, j) => (
-                    <div key={j} className="min-w-0">
-                      <div className="text-lg font-bold text-slate-950 break-words">{s.v}</div>
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest break-words">{s.l}</div>
+            {!homeDataReady ? (
+              <p className="text-slate-500 font-medium col-span-full">Загрузка проектов…</p>
+            ) : previewCases.length === 0 ? (
+              <p className="text-slate-500 font-medium col-span-full">Пока нет опубликованных проектов.</p>
+            ) : (
+              previewCases.map((c, i) => (
+                <Link
+                  key={c.slug ?? i}
+                  to={`/cases/${c.slug}`}
+                  className="group block"
+                >
+                  <div className={`aspect-video bg-gradient-to-br ${c.gradient} mb-5 relative overflow-hidden`}>
+                    <div className="absolute inset-0 opacity-20" style={{
+                      backgroundImage: "linear-gradient(rgba(59,130,246,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.5) 1px, transparent 1px)",
+                      backgroundSize: "40px 40px",
+                    }} />
+                    <div className="absolute inset-0 flex items-end p-6">
+                      <span className="text-xs font-bold text-blue-300 uppercase tracking-widest">{c.category}</span>
                     </div>
-                  ))}
-                </div>
-              </Link>
-            ))}
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-950 tracking-tight mb-2 group-hover:text-blue-600 transition-colors">{c.title}</h3>
+                  <p className="text-slate-500 font-medium text-sm leading-relaxed mb-4">{c.shortDesc}</p>
+                  <div className="flex flex-wrap gap-x-6 gap-y-2">
+                    {c.results.map((s, j) => (
+                      <div key={j} className="min-w-0">
+                        <div className="text-lg font-bold text-slate-950 break-words">{s.v}</div>
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest break-words">{s.l}</div>
+                      </div>
+                    ))}
+                  </div>
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </section>

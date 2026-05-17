@@ -1,12 +1,33 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
-import { cases } from "../data/cases";
-
-const categories = ["Все", "Производство", "Разработка"];
+import type { Case } from "../data/cases";
+import { getCasesList } from "../lib/content";
 
 export function CasesPage() {
+  const [list, setList] = useState<Case[]>([]);
+  const [loading, setLoading] = useState(true);
   const [active, setActive] = useState("Все");
-  const filtered = active === "Все" ? cases : cases.filter((c) => c.category === active);
+
+  useEffect(() => {
+    let cancel = false;
+    void getCasesList()
+      .then((rows) => {
+        if (!cancel) setList(rows);
+      })
+      .finally(() => {
+        if (!cancel) setLoading(false);
+      });
+    return () => {
+      cancel = true;
+    };
+  }, []);
+
+  const categories = useMemo(() => {
+    const uniq = [...new Set(list.map((c) => c.category).filter(Boolean))].sort();
+    return ["Все", ...uniq];
+  }, [list]);
+
+  const filtered = active === "Все" ? list : list.filter((c) => c.category === active);
 
   return (
     <>
@@ -44,7 +65,14 @@ export function CasesPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((c) => (
+            {loading ? (
+              <p className="text-slate-500 font-medium col-span-full md:col-span-2 lg:col-span-3">Загрузка проектов…</p>
+            ) : list.length === 0 ? (
+              <p className="text-slate-500 font-medium col-span-full md:col-span-2 lg:col-span-3">Пока нет опубликованных проектов.</p>
+            ) : filtered.length === 0 ? (
+              <p className="text-slate-500 font-medium col-span-full md:col-span-2 lg:col-span-3">В этой категории пока нет проектов.</p>
+            ) : (
+            filtered.map((c) => (
               <Link
                 key={c.slug}
                 to={`/cases/${c.slug}`}
@@ -78,7 +106,8 @@ export function CasesPage() {
                   </div>
                 </div>
               </Link>
-            ))}
+            ))
+            )}
           </div>
         </div>
       </section>

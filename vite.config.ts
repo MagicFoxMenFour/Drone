@@ -24,6 +24,12 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      // Запускайте API рядом: `npx vercel dev` (по умолчанию :3000), фронт — `npm run dev`.
+      "/api": { target: "http://127.0.0.1:3000", changeOrigin: true },
+    },
+  },
   resolve: {
     alias: {
       // Alias @ to the src directory

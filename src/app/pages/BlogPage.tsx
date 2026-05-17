@@ -1,8 +1,28 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { blogPosts } from "../data/blogPosts";
+import type { BlogPost } from "../data/blogPosts";
+import { getBlogList } from "../lib/content";
 
 export function BlogPage() {
-  const [featured, ...rest] = blogPosts;
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancel = false;
+    void getBlogList()
+      .then((list) => {
+        if (!cancel) setPosts(list);
+      })
+      .finally(() => {
+        if (!cancel) setLoading(false);
+      });
+    return () => {
+      cancel = true;
+    };
+  }, []);
+
+  const featured = posts[0];
+  const rest = posts.slice(1);
 
   return (
     <>
@@ -22,6 +42,12 @@ export function BlogPage() {
       {/* Posts */}
       <section className="bg-slate-50 py-24">
         <div className="max-w-[1440px] mx-auto px-8">
+          {loading ? (
+            <p className="text-slate-500 font-medium">Загрузка статей…</p>
+          ) : posts.length === 0 ? (
+            <p className="text-slate-500 font-medium">Пока нет опубликованных статей.</p>
+          ) : (
+            <>
           {/* Featured */}
           <div className="mb-8">
             <Link
@@ -61,9 +87,9 @@ export function BlogPage() {
 
           {/* Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {rest.map((post, i) => (
+            {rest.map((post) => (
               <Link
-                key={i}
+                key={post.slug}
                 to={`/blog/${post.slug}`}
                 className="group bg-white border border-slate-100 overflow-hidden hover:shadow-lg transition-all"
               >
@@ -95,6 +121,8 @@ export function BlogPage() {
               </Link>
             ))}
           </div>
+            </>
+          )}
         </div>
       </section>
     </>

@@ -1,14 +1,39 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router";
-import { getCase, cases } from "../data/cases";
+import type { Case } from "../data/cases";
+import { getCaseForSlug, getCasesList } from "../lib/content";
 import { NotFoundPage } from "./NotFoundPage";
 
 export function CaseDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const caseItem = getCase(slug ?? "");
+  const [caseItem, setCaseItem] = useState<Case | undefined | null>(null);
+  const [allCases, setAllCases] = useState<Case[]>([]);
+
+  useEffect(() => {
+    let cancel = false;
+    setCaseItem(null);
+    void (async () => {
+      const [one, all] = await Promise.all([getCaseForSlug(slug ?? ""), getCasesList()]);
+      if (cancel) return;
+      setCaseItem(one);
+      setAllCases(all);
+    })();
+    return () => {
+      cancel = true;
+    };
+  }, [slug]);
+
+  if (caseItem === null) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center text-slate-500 font-medium">
+        Загрузка…
+      </div>
+    );
+  }
 
   if (!caseItem) return <NotFoundPage />;
 
-  const related = cases.filter((c) => c.slug !== slug).slice(0, 2);
+  const related = allCases.filter((c) => c.slug !== slug).slice(0, 2);
 
   return (
     <>

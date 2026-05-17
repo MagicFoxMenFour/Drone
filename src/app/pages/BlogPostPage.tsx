@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router";
-import { getBlogPost, blogPosts, type Section } from "../data/blogPosts";
+import type { BlogPost, Section } from "../data/blogPosts";
+import { getBlogList, getBlogPostForSlug } from "../lib/content";
 import { NotFoundPage } from "./NotFoundPage";
 
 function renderSection(s: Section, i: number) {
@@ -70,11 +72,32 @@ function renderSection(s: Section, i: number) {
 
 export function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
-  const post = getBlogPost(slug ?? "");
+  const [post, setPost] = useState<BlogPost | undefined | null>(null);
+  const [related, setRelated] = useState<BlogPost[]>([]);
+
+  useEffect(() => {
+    let cancel = false;
+    setPost(null);
+    void (async () => {
+      const [one, all] = await Promise.all([getBlogPostForSlug(slug ?? ""), getBlogList()]);
+      if (cancel) return;
+      setPost(one);
+      setRelated(all.filter((p) => p.slug !== slug).slice(0, 3));
+    })();
+    return () => {
+      cancel = true;
+    };
+  }, [slug]);
+
+  if (post === null) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center text-slate-500 font-medium">
+        Загрузка…
+      </div>
+    );
+  }
 
   if (!post) return <NotFoundPage />;
-
-  const related = blogPosts.filter((p) => p.slug !== slug).slice(0, 3);
 
   return (
     <>

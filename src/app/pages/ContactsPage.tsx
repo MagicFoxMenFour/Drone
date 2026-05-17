@@ -1,11 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import emailjs from "@emailjs/browser";
-
-
-const EMAILJS_SERVICE_ID  = "YOUR_SERVICE_ID";   // ← заменить
-const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";  // ← заменить
-const EMAILJS_PUBLIC_KEY  = "YOUR_PUBLIC_KEY";   // ← заменить
-
+import { submitLead } from "../lib/leadApi";
 
 const faqs = [
   { q: "Как заказать разработку ПО?", a: "Оставьте заявку или напишите на почту. В течение 2 часов свяжемся, уточним платформу, стек и сроки этапов." },
@@ -21,7 +15,6 @@ const MAP_LAT = 45.0371;
 const MAP_LNG = 41.9504;
 
 export function ContactsPage() {
-  const formRef = useRef<HTMLFormElement>(null);
   const [form, setForm] = useState({ name: "", phone: "", email: "", service: "", message: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -30,24 +23,14 @@ export function ContactsPage() {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setStatus("sending");
-    try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          from_name:  form.name,
-          from_phone: form.phone,
-          from_email: form.email,
-          service:    form.service || "Не указано",
-          message:    form.message,
-          to_email:   "fsamoilov@ncfu.ru",
-        },
-        EMAILJS_PUBLIC_KEY
-      );
-      setStatus("sent");
-    } catch {
-      setStatus("error");
-    }
+    const { ok } = await submitLead({
+      name: form.name,
+      phone: form.phone,
+      email: form.email,
+      service: form.service || "Не указано",
+      message: form.message,
+    });
+    setStatus(ok ? "sent" : "error");
   };
 
   useEffect(() => {
@@ -174,7 +157,7 @@ export function ContactsPage() {
                   <p className="text-green-700 font-medium">Мы получили ваше сообщение и свяжемся в течение 2 часов.</p>
                 </div>
               ) : (
-                <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Имя *</label>

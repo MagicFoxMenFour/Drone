@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { services } from "../data/services";
+import type { Service } from "../data/services";
+import { getServicesList } from "../lib/content";
 
 const colorMap: Record<string, string> = {
   cyan: "bg-cyan-50 border-cyan-100 hover:border-cyan-300",
@@ -11,7 +13,26 @@ const accentMap: Record<string, string> = {
   orange: "text-orange-600",
 };
 
+function cardColors(color: string) {
+  return {
+    bg: colorMap[color] ?? "bg-slate-50 border-slate-100 hover:border-slate-300",
+    accent: accentMap[color] ?? "text-blue-600",
+  };
+}
+
 export function ServicesPage() {
+  const [services, setServices] = useState<Service[]>([]);
+
+  useEffect(() => {
+    let cancel = false;
+    void getServicesList().then((list) => {
+      if (!cancel) setServices(list);
+    });
+    return () => {
+      cancel = true;
+    };
+  }, []);
+
   return (
     <>
       {/* Hero */}
@@ -31,40 +52,43 @@ export function ServicesPage() {
       <section className="bg-slate-50 py-24">
         <div className="max-w-[1440px] mx-auto px-8">
           <div className="grid md:grid-cols-2 gap-6">
-            {services.map((s) => (
-              <Link
-                key={s.slug}
-                to={`/services/${s.slug}`}
-                className={`group border p-8 transition-all ${colorMap[s.color]}`}
-              >
-                <div className="text-5xl mb-8">{s.icon}</div>
-                <p className={`text-xs font-bold uppercase tracking-widest mb-3 ${accentMap[s.color]}`}>
-                  {s.price}
-                </p>
-                <h2 className="text-2xl font-bold text-slate-950 tracking-tight mb-4 group-hover:text-blue-600 transition-colors">
-                  {s.title}
-                </h2>
-                <p className="text-slate-500 font-medium leading-relaxed mb-6">{s.shortDesc}</p>
-                <div className="flex flex-wrap gap-x-4 gap-y-3 mb-6">
-                  {s.results.map((r, i) => (
-                    <div key={i} className="border-l-2 border-slate-200 pl-3 min-w-0 max-w-full">
-                      <div className="text-lg font-bold text-slate-950 break-words">{r.v}</div>
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest break-words">{r.l}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {s.industries.slice(0, 3).map((ind) => (
-                    <span key={ind} className="text-xs font-bold bg-white/80 border border-slate-200 px-3 py-1 rounded-full text-slate-500">
-                      {ind}
-                    </span>
-                  ))}
-                </div>
-                <div className={`mt-6 text-sm font-bold ${accentMap[s.color]} opacity-0 group-hover:opacity-100 transition-opacity`}>
-                  Подробнее →
-                </div>
-              </Link>
-            ))}
+            {services.map((s) => {
+              const { bg, accent } = cardColors(s.color);
+              return (
+                <Link
+                  key={s.slug}
+                  to={`/services/${s.slug}`}
+                  className={`group border p-8 transition-all ${bg}`}
+                >
+                  <div className="text-5xl mb-8">{s.icon}</div>
+                  <p className={`text-xs font-bold uppercase tracking-widest mb-3 ${accent}`}>
+                    {s.price}
+                  </p>
+                  <h2 className="text-2xl font-bold text-slate-950 tracking-tight mb-4 group-hover:text-blue-600 transition-colors">
+                    {s.title}
+                  </h2>
+                  <p className="text-slate-500 font-medium leading-relaxed mb-6">{s.shortDesc}</p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-3 mb-6">
+                    {s.results.map((r, i) => (
+                      <div key={i} className="border-l-2 border-slate-200 pl-3 min-w-0 max-w-full">
+                        <div className="text-lg font-bold text-slate-950 break-words">{r.v}</div>
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest break-words">{r.l}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {s.industries.slice(0, 3).map((ind) => (
+                      <span key={ind} className="text-xs font-bold bg-white/80 border border-slate-200 px-3 py-1 rounded-full text-slate-500">
+                        {ind}
+                      </span>
+                    ))}
+                  </div>
+                  <div className={`mt-6 text-sm font-bold ${accent} opacity-0 group-hover:opacity-100 transition-opacity`}>
+                    Подробнее →
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>

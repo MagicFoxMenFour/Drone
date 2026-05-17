@@ -1,45 +1,28 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
-
-const team = [
-  {
-    name: "Самойлов Филипп Владимирович",
-    role: "Пре-проектная аналитика / Эскизное и техническое проектирование / Прототипирование",
-    bio: "Опыт работы в междисциплинарных командах, руководство коллективами разработчиков, постановка задач и контроль их выполнения. Глубокое понимание архитектуры систем управления БПЛА, включая алгоритмы автономного управления, навигации, стабилизации и координации групповых действий. Широкий опыт практической работы с различными типами коммерческих БПЛА, включая сборку, ремонт, настройку и отладку оборудования.",
-    initials: "ФС",
-    color: "bg-amber-600",
-  },
-  {
-    name: "Новикова Елена Николаевна",
-    role: "Экспертиза технических решений / Индустриальные коллаборации / Управление проектами",
-    bio: "Опыт создания технических заданий (ТЗ) для разработки программного обеспечения, аппаратных решений и интеграционных систем. Профессиональное управление проектами полного цикла, включая планирование, распределение ресурсов, контроль сроков исполнения и соблюдение бюджета. Применение методологий Agile, Scrum, Waterfall для эффективной координации работы команды.",
-    initials: "ЕН",
-    color: "bg-green-600",
-  },
-  {
-    name: "Пурас Максим Романович",
-    role: "Программирование / CAD-моделирование / Робототехника и электроника",
-    bio: "Владение языками C++ и Python для разработки алгоритмов и обработки данных. Опыт низкоуровневого программирования микроконтроллеров (Arduino, Digispark, NodeMCU) с настройкой периферии, таймеров и интерфейсов связи (I2C, SPI, UART). Навыки 3D-моделирования механизмов в Autodesk Fusion 360. Разработка и тестирование алгоритмов для управления робототехническими системами.",
-    initials: "МП",
-    color: "bg-purple-600",
-  },
-  {
-    name: "Соколов Михаил Романович",
-    role: "Программирование / Компьютерное зрение / Разработка для ROS 2",
-    bio: "Владение языками C++ и Python для разработки высокопроизводительных алгоритмов и сложных приложений. Опыт разработки алгоритмов компьютерного зрения на базе OpenCV — обработка изображений, распознавание объектов, анализ видеопотока. Знание фреймворка ROS 2: создание узлов, взаимодействие с топиками, сервисами и действиями для автономного управления роботами.",
-    initials: "МС",
-    color: "bg-blue-600",
-  },
-];
-
-const licenses = [
-  "Свидетельство об авиационных работах ФАВТ РФ № АВБП-2021-304",
-  "Лицензия на геодезическую и картографическую деятельность",
-  "Сертификат соответствия ISO 9001:2015",
-  "Допуск к работам с использованием государственной геодезической сети",
-  "Страхование гражданской ответственности при выполнении полётов",
-];
+import { getAboutPageContent } from "../lib/content";
 
 export function AboutPage() {
+  const [content, setContent] = useState<Awaited<ReturnType<typeof getAboutPageContent>> | null>(null);
+
+  useEffect(() => {
+    let cancel = false;
+    void getAboutPageContent().then((c) => {
+      if (!cancel) setContent(c);
+    });
+    return () => {
+      cancel = true;
+    };
+  }, []);
+
+  if (!content) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center text-slate-500 font-medium">
+        Загрузка…
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Hero */}
@@ -49,16 +32,27 @@ export function AboutPage() {
           <div className="flex flex-col lg:flex-row gap-20">
             <div className="lg:w-1/2">
               <h1 className="text-7xl lg:text-[9rem] font-medium tracking-tighter text-slate-950 leading-[0.85] mb-10">
-                Видим <br /> больше
+                {content.heroTitleLine1}
+                {content.heroTitleLine2 ? (
+                  <>
+                    <br /> {content.heroTitleLine2}
+                  </>
+                ) : null}
               </h1>
             </div>
             <div className="lg:w-1/2 flex flex-col justify-end">
-              <p className="text-2xl text-slate-500 font-medium leading-relaxed mb-8">
-                Команда из Северного Кавказа: разработка встраиваемого и прикладного ПО для робототехники и БПЛА, мелкосерийное производство электроники.
-              </p>
-              <p className="text-lg text-slate-400 font-medium leading-relaxed">
-                Объединяем компетенции в программировании (C++, Python, ROS 2, компьютерное зрение) и в SMT-монтаже печатных плат с обязательным функциональным тестом каждой платы.
-              </p>
+              {content.heroParagraphs.map((p, i) => (
+                <p
+                  key={i}
+                  className={
+                    i === 0
+                      ? "text-2xl text-slate-500 font-medium leading-relaxed mb-8"
+                      : "text-lg text-slate-400 font-medium leading-relaxed"
+                  }
+                >
+                  {p}
+                </p>
+              ))}
             </div>
           </div>
         </div>
@@ -88,22 +82,23 @@ export function AboutPage() {
         <div className="max-w-[1440px] mx-auto px-8">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <div>
-              <h2 className="text-5xl lg:text-6xl font-bold text-slate-950 tracking-tight mb-8">Наша миссия</h2>
-              <p className="text-xl text-slate-500 font-medium leading-relaxed mb-6">
-                Давать заказчикам предсказуемое качество в разработке ПО для робототехники и в производстве электроники — с прозрачными этапами, тестами и документацией.
-              </p>
-              <p className="text-lg text-slate-400 font-medium leading-relaxed">
-                Работаем с заказчиками по СКФО и за его пределами: от алгоритмов и узлов ROS 2 до партий собранных и проверенных плат.
-              </p>
+              <h2 className="text-5xl lg:text-6xl font-bold text-slate-950 tracking-tight mb-8">{content.missionTitle}</h2>
+              {content.missionParagraphs.map((p, i) => (
+                <p
+                  key={i}
+                  className={
+                    i === 0
+                      ? "text-xl text-slate-500 font-medium leading-relaxed mb-6"
+                      : "text-lg text-slate-400 font-medium leading-relaxed"
+                  }
+                >
+                  {p}
+                </p>
+              ))}
             </div>
             <div className="bg-slate-50 border border-slate-200 p-10">
               <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-8">Наши принципы</h3>
-              {[
-                { t: "Инженерная дисциплина", d: "Фиксируем требования, ведём ревизию кода и схем, документируем интерфейсы и результаты тестов." },
-                { t: "Качество серии", d: "Профили пайки контролируем по каналам; каждая плата проходит функциональную проверку перед отгрузкой." },
-                { t: "Региональная доступность", d: "Базируемся на Ставрополье, работаем с заказчиками по СКФО и по всей стране." },
-                { t: "Полный контур поставки", d: "От прототипа и мелкой серии до передачи исходников, прошивок и производственной документации." },
-              ].map((p, i) => (
+              {content.principles.map((p, i) => (
                 <div key={i} className="mb-6 last:mb-0 pb-6 last:pb-0 border-b last:border-0 border-slate-200">
                   <h4 className="font-bold text-slate-950 mb-1">{p.t}</h4>
                   <p className="text-slate-500 text-sm font-medium">{p.d}</p>
@@ -119,7 +114,7 @@ export function AboutPage() {
         <div className="max-w-[1440px] mx-auto px-8">
           <h2 className="text-5xl lg:text-6xl font-bold text-slate-950 tracking-tight mb-16">Команда</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member, i) => (
+            {content.team.map((member, i) => (
               <div key={i} className="border border-slate-100 p-8">
                 <div className={`w-16 h-16 rounded-full ${member.color} flex items-center justify-center text-white text-xl font-bold mb-6`}>
                   {member.initials}
@@ -141,11 +136,7 @@ export function AboutPage() {
             Сотрудничаем с ведущими компаниями в сфере электроники, разработки ПО и аддитивных технологий.
           </p>
           <div className="grid sm:grid-cols-3 gap-6">
-            {[
-              { name: "ООО «Электростройсервис»", desc: "Производство электроники и компонентов" },
-              { name: "ООО «Стилсофт»", desc: "Разработка программного обеспечения" },
-              { name: "ООО «Юнион Аддитив»", desc: "Аддитивные технологии и 3D-печать" },
-            ].map((p, i) => (
+            {content.partners.map((p, i) => (
               <div key={i} className="border border-slate-100 p-8 hover:border-blue-200 hover:shadow-lg transition-all">
                 <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-5">
                   <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
@@ -173,7 +164,7 @@ export function AboutPage() {
               </p>
             </div>
             <div className="space-y-4">
-              {licenses.map((lic, i) => (
+              {content.licenses.map((lic, i) => (
                 <div key={i} className="flex items-start gap-4 bg-white border border-slate-100 p-5">
                   <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <svg viewBox="0 0 16 16" className="w-4 h-4 fill-green-600">

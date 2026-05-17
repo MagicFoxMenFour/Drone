@@ -1,10 +1,31 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router";
-import { getService } from "../data/services";
+import type { Service } from "../data/services";
+import { getServiceForSlug } from "../lib/content";
 import { NotFoundPage } from "./NotFoundPage";
 
 export function ServiceDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const service = getService(slug ?? "");
+  const [service, setService] = useState<Service | undefined | null>(null);
+
+  useEffect(() => {
+    let cancel = false;
+    setService(null);
+    void getServiceForSlug(slug ?? "").then((s) => {
+      if (!cancel) setService(s);
+    });
+    return () => {
+      cancel = true;
+    };
+  }, [slug]);
+
+  if (service === null) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center text-slate-500 font-medium">
+        Загрузка…
+      </div>
+    );
+  }
 
   if (!service) return <NotFoundPage />;
 

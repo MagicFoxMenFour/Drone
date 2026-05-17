@@ -1,0 +1,31 @@
+meta:
+  environment: node
+  toolchain:
+    name: npm
+    version: 18
+
+build:
+  additionalCommands: npm run build
+
+run:
+  command: npm start
+  containerPort: 3000
+  persistenceMount: /data
+
+env:
+  - name: NODE_ENV
+    value: production
+  - name: PORT
+    value: "3000"
+  - name: DB_PATH
+    value: /data/app.db
+  - name: ADMIN_LOGIN
+    value: admin
+  - name: ADMIN_PASSWORD
+    value: "CHANGE_ME"
+  - name: RESEND_API_KEY
+    value: ""
+  - name: RESEND_FROM
+    value: ""
+  - name: LEADS_TO_EMAIL
+    value: ""
