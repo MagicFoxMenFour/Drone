@@ -32,7 +32,7 @@ async function migrateFromJson() {
         
         if (Array.isArray(data)) {
           for (const item of data) {
-            const columns = Object.keys(item).join(', ');
+            const columns = Object.keys(item).map(key => `"${key}"`).join(', ');
             const placeholders = Object.keys(item).map(() => '?').join(', ');
             const values = Object.values(item);
             
