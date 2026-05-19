@@ -86,7 +86,7 @@ export function AdminCaseEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Slug</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-sm"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-sm text-slate-900"
               value={row.slug}
               onChange={(e) => setRow({ ...row, slug: e.target.value })}
             />
@@ -94,7 +94,7 @@ export function AdminCaseEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Категория</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
               value={row.category}
               onChange={(e) => setRow({ ...row, category: e.target.value })}
             />
@@ -103,7 +103,7 @@ export function AdminCaseEditPage() {
         <label className="block">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Заголовок</span>
           <input
-            className="mt-2 w-full border border-slate-200 px-3 py-2"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
             value={row.title}
             onChange={(e) => setRow({ ...row, title: e.target.value })}
           />
@@ -112,7 +112,7 @@ export function AdminCaseEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Клиент</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
               value={row.client}
               onChange={(e) => setRow({ ...row, client: e.target.value })}
             />
@@ -120,7 +120,7 @@ export function AdminCaseEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Локация</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
               value={row.location}
               onChange={(e) => setRow({ ...row, location: e.target.value })}
             />
@@ -128,7 +128,7 @@ export function AdminCaseEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Год</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
               value={row.year}
               onChange={(e) => setRow({ ...row, year: e.target.value })}
             />
@@ -145,7 +145,7 @@ export function AdminCaseEditPage() {
         <label className="block">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Задача</span>
           <textarea
-            className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[100px]"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[100px] text-slate-900"
             value={row.challenge}
             onChange={(e) => setRow({ ...row, challenge: e.target.value })}
           />
@@ -153,7 +153,7 @@ export function AdminCaseEditPage() {
         <label className="block">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Решение</span>
           <textarea
-            className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[100px]"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[100px] text-slate-900"
             value={row.solution}
             onChange={(e) => setRow({ ...row, solution: e.target.value })}
           />
@@ -170,7 +170,7 @@ export function AdminCaseEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">accent_color</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
               value={row.accent_color}
               onChange={(e) => setRow({ ...row, accent_color: e.target.value })}
             />
@@ -179,7 +179,7 @@ export function AdminCaseEditPage() {
         <div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Теги (через запятую)</span>
           <input
-            className="mt-2 w-full border border-slate-200 px-3 py-2"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
             value={tagsText}
             onChange={(e) => setTagsText(e.target.value)}
           />
@@ -187,7 +187,7 @@ export function AdminCaseEditPage() {
         <div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">results JSON</span>
           <textarea
-            className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs min-h-[120px]"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs min-h-[120px] text-slate-900"
             value={resultsJson}
             onChange={(e) => setResultsJson(e.target.value)}
           />

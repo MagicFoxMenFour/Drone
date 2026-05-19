@@ -92,7 +92,7 @@ export function AdminServiceEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Slug</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-sm"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-sm text-slate-900"
               value={row.slug}
               onChange={(e) => setRow({ ...row, slug: e.target.value })}
             />
@@ -100,7 +100,7 @@ export function AdminServiceEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Цвет (cyan/orange)</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
               value={row.color}
               onChange={(e) => setRow({ ...row, color: e.target.value })}
             />
@@ -109,7 +109,7 @@ export function AdminServiceEditPage() {
         <label className="block">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Заголовок</span>
           <input
-            className="mt-2 w-full border border-slate-200 px-3 py-2"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
             value={row.title}
             onChange={(e) => setRow({ ...row, title: e.target.value })}
           />
@@ -117,7 +117,7 @@ export function AdminServiceEditPage() {
         <label className="block">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Кратко</span>
           <textarea
-            className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[80px]"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[80px] text-slate-900"
             value={row.short_desc}
             onChange={(e) => setRow({ ...row, short_desc: e.target.value })}
           />
@@ -125,7 +125,7 @@ export function AdminServiceEditPage() {
         <label className="block">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Полное описание</span>
           <textarea
-            className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[160px]"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[160px] text-slate-900"
             value={row.full_desc}
             onChange={(e) => setRow({ ...row, full_desc: e.target.value })}
           />
@@ -134,7 +134,7 @@ export function AdminServiceEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Иконка (emoji)</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
               value={row.icon}
               onChange={(e) => setRow({ ...row, icon: e.target.value })}
             />
@@ -142,7 +142,7 @@ export function AdminServiceEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Цена (строка)</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
               value={row.price}
               onChange={(e) => setRow({ ...row, price: e.target.value })}
             />
@@ -161,7 +161,7 @@ export function AdminServiceEditPage() {
         <div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Отрасли (через запятую)</span>
           <input
-            className="mt-2 w-full border border-slate-200 px-3 py-2"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
             value={industriesText}
             onChange={(e) => setIndustriesText(e.target.value)}
           />
@@ -170,7 +170,7 @@ export function AdminServiceEditPage() {
         <div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">use_cases (JSON массив строк)</span>
           <textarea
-            className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs min-h-[120px]"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs min-h-[120px] text-slate-900"
             value={useCasesJson}
             onChange={(e) => setUseCasesJson(e.target.value)}
           />
@@ -178,7 +178,7 @@ export function AdminServiceEditPage() {
         <div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">process (JSON)</span>
           <textarea
-            className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs min-h-[140px]"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs min-h-[140px] text-slate-900"
             value={processJson}
             onChange={(e) => setProcessJson(e.target.value)}
           />
@@ -186,7 +186,7 @@ export function AdminServiceEditPage() {
         <div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">results (JSON {"{v,l}"}[])</span>
           <textarea
-            className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs min-h-[100px]"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs min-h-[100px] text-slate-900"
             value={resultsJson}
             onChange={(e) => setResultsJson(e.target.value)}
           />

@@ -66,6 +66,7 @@ export type EmployeeRow = {
   name: string;
   role: string;
   bio: string;
+  image: string;
   initials: string;
   color: string;
   active: boolean;

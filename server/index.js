@@ -45,6 +45,9 @@ app.use(cookieParser());
       console.error('Failed to ensure uploads directory:', e);
     }
     
+    // Serve uploaded files
+    app.use('/uploads', express.static(uploadsDir));
+    
     // API Routes
     app.use('/api/admin', adminRoutes);
     app.use('/api/lead', leadRoutes);

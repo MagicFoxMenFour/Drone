@@ -78,7 +78,7 @@ export function AdminBlogEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Slug</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-sm"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-sm text-slate-900"
               value={row.slug}
               onChange={(e) => setRow({ ...row, slug: e.target.value })}
             />
@@ -86,7 +86,7 @@ export function AdminBlogEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Категория</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
               value={row.category}
               onChange={(e) => setRow({ ...row, category: e.target.value })}
             />
@@ -95,7 +95,7 @@ export function AdminBlogEditPage() {
         <label className="block">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Заголовок</span>
           <input
-            className="mt-2 w-full border border-slate-200 px-3 py-2"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
             value={row.title}
             onChange={(e) => setRow({ ...row, title: e.target.value })}
           />
@@ -104,7 +104,7 @@ export function AdminBlogEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Дата (строка)</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
               value={row.date}
               onChange={(e) => setRow({ ...row, date: e.target.value })}
             />
@@ -112,7 +112,7 @@ export function AdminBlogEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Время чтения</span>
             <input
-              className="mt-2 w-full border border-slate-200 px-3 py-2"
+              className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
               value={row.read_time}
               onChange={(e) => setRow({ ...row, read_time: e.target.value })}
             />
@@ -129,7 +129,7 @@ export function AdminBlogEditPage() {
         <label className="block">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Лид / excerpt</span>
           <textarea
-            className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[80px]"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[80px] text-slate-900"
             value={row.excerpt}
             onChange={(e) => setRow({ ...row, excerpt: e.target.value })}
           />
@@ -137,7 +137,7 @@ export function AdminBlogEditPage() {
         <div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Теги (через запятую)</span>
           <input
-            className="mt-2 w-full border border-slate-200 px-3 py-2"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
             value={tagsText}
             onChange={(e) => setTagsText(e.target.value)}
           />
@@ -145,7 +145,7 @@ export function AdminBlogEditPage() {
         <div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">content (JSON массив секций)</span>
           <textarea
-            className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs min-h-[260px]"
+            className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs min-h-[260px] text-slate-900"
             value={contentJson}
             onChange={(e) => setContentJson(e.target.value)}
           />
