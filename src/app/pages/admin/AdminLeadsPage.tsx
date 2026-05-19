@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { deleteAdminRow, listAdminRows, patchAdminRow } from "../../lib/adminApi";
 import type { LeadRow } from "../../lib/api/types";
 
-const statuses = ["new", "in_progress", "done"] as const;
+const statuses = [
+  { key: 'new', label: 'Новая' },
+  { key: 'in_progress', label: 'В работе' },
+  { key: 'done', label: 'Завершена' },
+] as const;
 
 export function AdminLeadsPage() {
   const [rows, setRows] = useState<LeadRow[]>([]);
@@ -76,11 +80,11 @@ export function AdminLeadsPage() {
                   <select
                     value={r.status}
                     onChange={(e) => setStatus(r.id, e.target.value)}
-                    className="border border-slate-200 px-2 py-1 text-xs font-bold"
+                    className="border border-slate-200 px-2 py-1 text-xs font-bold text-slate-900"
                   >
                     {statuses.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
+                      <option key={s.key} value={s.key}>
+                        {s.label}
                       </option>
                     ))}
                   </select>
@@ -90,6 +94,9 @@ export function AdminLeadsPage() {
                     Удалить
                   </button>
                 </td>
+              </tr>
+              <tr>
+                <td colSpan={6} className="px-4 pb-4 text-slate-600 text-sm">{r.message}</td>
               </tr>
             ))}
           </tbody>

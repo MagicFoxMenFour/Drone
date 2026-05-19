@@ -2,8 +2,23 @@ import { Router } from 'express';
 import { allAsync, getAsync, runAsync } from '../db/init.js';
 import { adminAuthMiddleware, verifyAdminCredentials, createSessionToken, verifySessionToken } from '../db/auth.js';
 import { randomUUID } from 'node:crypto';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 export const adminRoutes = Router();
+
+// multer setup for uploads
+const uploadBase = process.env.DATA_DIR || '/data';
+const uploadsDir = path.join(uploadBase, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadsDir),
+  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname.replace(/[^a-z0-9.\-]/gi, '_')}`)
+});
+const upload = multer({ storage });
 
 // Login endpoint
 adminRoutes.post('/login', async (req, res) => {
@@ -68,6 +83,11 @@ adminRoutes.get('/dashboard', adminAuthMiddleware, async (req, res) => {
 const collections = ['services', 'cases', 'blog_posts', 'about_page', 'employees', 'leads'];
 
 collections.forEach(collection => {
+  async function getTableColumns(table) {
+    // returns array of column names
+    const rows = await allAsync(`PRAGMA table_info(${table})`);
+    return rows.map(r => r.name);
+  }
   // GET all
   adminRoutes.get(`/${collection}`, adminAuthMiddleware, async (req, res) => {
     try {
@@ -83,7 +103,18 @@ collections.forEach(collection => {
   adminRoutes.post(`/${collection}`, adminAuthMiddleware, async (req, res) => {
     try {
       const id = randomUUID();
-      const data = { id, ...req.body, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+      let data = { id, ...req.body, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+
+      // Serialize objects/arrays for storage and normalize booleans
+      Object.keys(data).forEach((k) => {
+        const v = data[k];
+        if (Array.isArray(v) || (typeof v === 'object' && v !== null)) data[k] = JSON.stringify(v);
+        if (typeof v === 'boolean') data[k] = v ? 1 : 0;
+      });
+
+      // Filter to existing columns only
+      const cols = await getTableColumns(collection);
+      data = Object.fromEntries(Object.entries(data).filter(([k]) => cols.includes(k)));
       
       const columns = Object.keys(data).join(', ');
       const placeholders = Object.keys(data).map(() => '?').join(', ');
@@ -120,7 +151,18 @@ collections.forEach(collection => {
   // PATCH update
   adminRoutes.patch(`/${collection}/:id`, adminAuthMiddleware, async (req, res) => {
     try {
-      const data = { ...req.body, updated_at: new Date().toISOString() };
+      let data = { ...req.body, updated_at: new Date().toISOString() };
+      // Serialize objects/arrays and normalize booleans
+      Object.keys(data).forEach((k) => {
+        const v = data[k];
+        if (Array.isArray(v) || (typeof v === 'object' && v !== null)) data[k] = JSON.stringify(v);
+        if (typeof v === 'boolean') data[k] = v ? 1 : 0;
+      });
+
+      // Filter to existing columns only
+      const cols = await getTableColumns(collection);
+      data = Object.fromEntries(Object.entries(data).filter(([k]) => cols.includes(k)));
+      if (Object.keys(data).length === 0) return res.status(400).json({ error: 'No valid fields to update' });
       
       const updates = Object.keys(data).map(key => `${key} = ?`).join(', ');
       const values = [...Object.values(data), req.params.id];
@@ -160,4 +202,20 @@ collections.forEach(collection => {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
+
+  // Upload avatar for employee
+  if (collection === 'employees') {
+    adminRoutes.post('/employees/:id/avatar', adminAuthMiddleware, upload.single('avatar'), async (req, res) => {
+      try {
+        if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+        const rel = `/uploads/${req.file.filename}`;
+        await runAsync(`UPDATE employees SET image = ? WHERE id = ?`, [rel, req.params.id]);
+        const row = await getAsync(`SELECT * FROM employees WHERE id = ?`, [req.params.id]);
+        return res.json({ row });
+      } catch (e) {
+        console.error('Avatar upload error:', e);
+        res.status(500).json({ error: 'Upload failed' });
+      }
+    });
+  }
 });

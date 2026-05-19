@@ -24,8 +24,11 @@ export function AdminEmployeesPage() {
   async function seedTeam() {
     setErr(null);
     try {
+      const existing = await listAdminRows("employees");
+      const existingNames = new Set(existing.map((r) => r.name));
+      const toCreate = defaultEmployeesSeed.filter((e) => !existingNames.has(e.name));
       await Promise.all(
-        defaultEmployeesSeed.map((e) =>
+        toCreate.map((e) =>
           createAdminRow("employees", {
             ...e,
             active: true,
@@ -106,7 +109,7 @@ export function AdminEmployeesPage() {
               <label className="block">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">ФИО</span>
                 <input
-                  className="mt-2 w-full border border-slate-200 px-3 py-2"
+                  className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
                   defaultValue={r.name}
                   onBlur={(e) => e.target.value !== r.name && updateField(r.id, { name: e.target.value })}
                 />
@@ -114,7 +117,7 @@ export function AdminEmployeesPage() {
               <label className="block">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Инициалы</span>
                 <input
-                  className="mt-2 w-full border border-slate-200 px-3 py-2"
+                  className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
                   defaultValue={r.initials}
                   onBlur={(e) => e.target.value !== r.initials && updateField(r.id, { initials: e.target.value })}
                 />
@@ -122,25 +125,31 @@ export function AdminEmployeesPage() {
             </div>
             <label className="block">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Роль</span>
-              <input
-                className="mt-2 w-full border border-slate-200 px-3 py-2"
-                defaultValue={r.role}
-                onBlur={(e) => e.target.value !== r.role && updateField(r.id, { role: e.target.value })}
-              />
+                <input
+                  className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
+                  defaultValue={r.role}
+                  onBlur={(e) => e.target.value !== r.role && updateField(r.id, { role: e.target.value })}
+                />
             </label>
             <label className="block">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Био</span>
-              <textarea
-                className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[100px]"
-                defaultValue={r.bio}
-                onBlur={(e) => e.target.value !== r.bio && updateField(r.id, { bio: e.target.value })}
-              />
+                <textarea
+                  className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[100px] text-slate-900"
+                  defaultValue={r.bio}
+                  onBlur={(e) => e.target.value !== r.bio && updateField(r.id, { bio: e.target.value })}
+                />
             </label>
             <div className="grid sm:grid-cols-3 gap-4 items-end">
+              <div className="col-span-1">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Фото</label>
+                <div className="mt-2">
+                  <input type="file" accept="image/*" onChange={(ev) => handleFile(ev, r.id)} />
+                </div>
+              </div>
               <label className="block">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Цвет (класс)</span>
                 <input
-                  className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs"
+                  className="mt-2 w-full border border-slate-200 px-3 py-2 font-mono text-xs text-slate-900"
                   defaultValue={r.color}
                   onBlur={(e) => e.target.value !== r.color && updateField(r.id, { color: e.target.value })}
                 />
@@ -175,4 +184,18 @@ export function AdminEmployeesPage() {
       </div>
     </div>
   );
+}
+
+async function uploadAvatar(id: string, file: File) {
+  const form = new FormData();
+  form.append('avatar', file);
+  const res = await fetch(`/api/admin/employees/${id}/avatar`, { method: 'POST', body: form, credentials: 'include' });
+  if (!res.ok) throw new Error('Upload failed');
+  return res.json();
+}
+
+function handleFile(ev: React.ChangeEvent<HTMLInputElement>, id: string) {
+  const f = ev.target.files?.[0];
+  if (!f) return;
+  void uploadAvatar(id, f).then(() => { void listAdminRows('employees').then(() => window.location.reload()); }).catch((e) => alert(e.message || 'Upload failed'));
 }

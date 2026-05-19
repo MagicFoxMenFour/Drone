@@ -94,10 +94,22 @@ export async function initializeDatabase() {
     // Cases table
     `CREATE TABLE IF NOT EXISTS cases (
       id TEXT PRIMARY KEY,
+      slug TEXT UNIQUE,
+      category TEXT,
       title TEXT NOT NULL,
+      client TEXT,
+      location TEXT,
+      year TEXT,
       description TEXT,
+      short_desc TEXT,
+      challenge TEXT,
+      solution TEXT,
       image TEXT,
       images TEXT,
+      results TEXT,
+      tags TEXT,
+      gradient TEXT,
+      accent_color TEXT,
       published INTEGER DEFAULT 1,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -177,4 +189,53 @@ export async function initializeDatabase() {
   }
 
   console.log('✓ Database tables created/verified');
+
+  // Ensure missing columns are added for existing databases (migrations)
+  async function ensureColumn(table, column, definition) {
+    const info = await new Promise((resolve, reject) => {
+      db.all(`PRAGMA table_info(${table})`, (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows || []);
+      });
+    });
+    const exists = info.some((c) => c.name === column);
+    if (!exists) {
+      console.log(`Adding missing column ${column} to ${table}`);
+      await runSql(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+    }
+  }
+
+  function runSql(sql) {
+    return new Promise((resolve, reject) => {
+      db.run(sql, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+  }
+
+  try {
+    // blog_posts: add category, date, read_time, tags, accent
+    await ensureColumn('blog_posts', 'category', 'TEXT');
+    await ensureColumn('blog_posts', 'date', 'TEXT');
+    await ensureColumn('blog_posts', 'read_time', 'TEXT');
+    await ensureColumn('blog_posts', 'tags', 'TEXT');
+    await ensureColumn('blog_posts', 'accent', 'TEXT');
+
+    // cases: add commonly used columns (if DB created earlier)
+    await ensureColumn('cases', 'slug', 'TEXT UNIQUE');
+    await ensureColumn('cases', 'category', 'TEXT');
+    await ensureColumn('cases', 'client', 'TEXT');
+    await ensureColumn('cases', 'location', 'TEXT');
+    await ensureColumn('cases', 'year', 'TEXT');
+    await ensureColumn('cases', 'short_desc', 'TEXT');
+    await ensureColumn('cases', 'challenge', 'TEXT');
+    await ensureColumn('cases', 'solution', 'TEXT');
+    await ensureColumn('cases', 'results', 'TEXT');
+    await ensureColumn('cases', 'tags', 'TEXT');
+    await ensureColumn('cases', 'gradient', 'TEXT');
+    await ensureColumn('cases', 'accent_color', 'TEXT');
+  } catch (merr) {
+    console.error('Migration error:', merr);
+  }
 }
