@@ -6,19 +6,26 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_PATH = process.env.DB_PATH || path.join('/data', 'app.db');
 
 let db;
+let dbReady = false;
 
 export function getDb() {
   if (!db) {
     db = new sqlite3.Database(DB_PATH, (err) => {
       if (err) {
         console.error('Database connection error:', err);
+        throw err;
       } else {
-        console.log('Connected to SQLite database:', DB_PATH);
+        console.log('Connected to SQLite database at:', DB_PATH);
+        dbReady = true;
       }
     });
     db.configure('busyTimeout', 5000);
   }
   return db;
+}
+
+export function isDbReady() {
+  return dbReady;
 }
 
 export function runAsync(query, params = []) {
@@ -49,8 +56,28 @@ export function allAsync(query, params = []) {
 }
 
 export async function initializeDatabase() {
+  console.log('Waiting for database connection to be ready...');
+  
+  // Ensure database is initialized
   const db = getDb();
+  
+  // Wait for connection to be established
+  await new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      reject(new Error('Database connection timeout'));
+    }, 10000);
+    
+    const checkReady = setInterval(() => {
+      if (isDbReady()) {
+        clearInterval(checkReady);
+        clearTimeout(timeout);
+        resolve();
+      }
+    }, 100);
+  });
 
+  console.log('Database connection ready, creating tables...');
+  
   const schemas = [
     // Services table
     `CREATE TABLE IF NOT EXISTS services (
@@ -149,5 +176,5 @@ export async function initializeDatabase() {
     });
   }
 
-  console.log('Database initialized successfully');
+  console.log('✓ Database tables created/verified');
 }
