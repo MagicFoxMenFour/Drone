@@ -80,6 +80,7 @@ export type TeamMember = {
   name: string;
   role: string;
   bio: string;
+  image?: string;
   initials: string;
   color: string;
 };
@@ -152,6 +153,7 @@ function teamFromEmployees(rows: EmployeeRow[]): TeamMember[] {
     name: r.name,
     role: r.role,
     bio: r.bio,
+    image: r.image || undefined,
     initials: r.initials,
     color: r.color,
   }));

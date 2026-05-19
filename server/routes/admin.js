@@ -9,7 +9,7 @@ import fs from 'fs';
 export const adminRoutes = Router();
 
 // multer setup for uploads
-const uploadBase = process.env.DATA_DIR || '/data';
+const uploadBase = process.env.DATA_DIR || path.join(__dirname, '..', '..', 'data');
 const uploadsDir = path.join(uploadBase, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
@@ -79,20 +79,50 @@ adminRoutes.get('/dashboard', adminAuthMiddleware, async (req, res) => {
   }
 });
 
+// ── JSON & boolean helpers ─────────────────────────────────────
+const JSON_COLUMNS = {
+  services:    ['use_cases', 'process', 'results', 'industries'],
+  cases:       ['results', 'tags'],
+  blog_posts:  ['content', 'tags'],
+  about_page:  ['principles', 'partners', 'licenses'],
+  employees:   [],
+  leads:       [],
+};
+
+/** Parse JSON string columns back into objects/arrays, and convert 0/1 back to boolean. */
+function deserializeRow(row, collection) {
+  if (!row) return row;
+  const out = { ...row };
+  const jsonCols = JSON_COLUMNS[collection] || [];
+  for (const col of jsonCols) {
+    if (typeof out[col] === 'string') {
+      try { out[col] = JSON.parse(out[col]); } catch { out[col] = []; }
+    }
+  }
+  // Convert integer-booleans back to real booleans
+  if (out.published !== undefined) out.published = out.published === 1 || out.published === true;
+  if (out.active !== undefined)    out.active    = out.active === 1 || out.active === true;
+  return out;
+}
+
+function deserializeRows(rows, collection) {
+  return (rows || []).map(r => deserializeRow(r, collection));
+}
+
+async function getTableColumns(table) {
+  const rows = await allAsync(`PRAGMA table_info(${table})`);
+  return rows.map(r => r.name);
+}
+
 // Generic CRUD endpoints
 const collections = ['services', 'cases', 'blog_posts', 'about_page', 'employees', 'leads'];
 
 collections.forEach(collection => {
-  async function getTableColumns(table) {
-    // returns array of column names
-    const rows = await allAsync(`PRAGMA table_info(${table})`);
-    return rows.map(r => r.name);
-  }
   // GET all
   adminRoutes.get(`/${collection}`, adminAuthMiddleware, async (req, res) => {
     try {
       const rows = await allAsync(`SELECT * FROM ${collection} ORDER BY updated_at DESC`);
-      res.json({ rows });
+      res.json({ rows: deserializeRows(rows, collection) });
     } catch (error) {
       console.error(`Error getting ${collection}:`, error);
       res.status(500).json({ error: 'Internal server error' });
@@ -103,7 +133,7 @@ collections.forEach(collection => {
   adminRoutes.post(`/${collection}`, adminAuthMiddleware, async (req, res) => {
     try {
       const id = randomUUID();
-      let data = { id, ...req.body, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+      let data = { id, ...req.body, updated_at: new Date().toISOString() };
 
       // Serialize objects/arrays for storage and normalize booleans
       Object.keys(data).forEach((k) => {
@@ -125,7 +155,7 @@ collections.forEach(collection => {
         values
       );
       
-      res.json({ row: data });
+      res.json({ row: deserializeRow(data, collection) });
     } catch (error) {
       console.error(`Error creating ${collection}:`, error);
       res.status(500).json({ error: 'Internal server error' });
@@ -141,7 +171,7 @@ collections.forEach(collection => {
         return res.status(404).json({ error: 'Not found' });
       }
       
-      res.json({ row });
+      res.json({ row: deserializeRow(row, collection) });
     } catch (error) {
       console.error(`Error getting ${collection}/:id:`, error);
       res.status(500).json({ error: 'Internal server error' });
@@ -177,7 +207,7 @@ collections.forEach(collection => {
       }
       
       const row = await getAsync(`SELECT * FROM ${collection} WHERE id = ?`, [req.params.id]);
-      res.json({ row });
+      res.json({ row: deserializeRow(row, collection) });
     } catch (error) {
       console.error(`Error updating ${collection}/:id:`, error);
       res.status(500).json({ error: 'Internal server error' });
@@ -211,7 +241,7 @@ collections.forEach(collection => {
         const rel = `/uploads/${req.file.filename}`;
         await runAsync(`UPDATE employees SET image = ? WHERE id = ?`, [rel, req.params.id]);
         const row = await getAsync(`SELECT * FROM employees WHERE id = ?`, [req.params.id]);
-        return res.json({ row });
+        return res.json({ row: deserializeRow(row, 'employees') });
       } catch (e) {
         console.error('Avatar upload error:', e);
         res.status(500).json({ error: 'Upload failed' });

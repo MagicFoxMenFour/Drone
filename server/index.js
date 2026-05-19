@@ -17,17 +17,40 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Graceful shutdown
+let server;
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully...');
+  if (server) server.close(() => process.exit(0));
+  else process.exit(0);
+});
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down...');
+  if (server) server.close(() => process.exit(0));
+  else process.exit(0);
+});
+
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 app.use(cookieParser());
 
-// Initialize database and admin user
+// Determine data directory (Amvera uses /data, local dev uses ./data)
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
+
 (async () => {
   try {
     console.log('Starting application initialization...');
-    console.log(`Using database path: ${process.env.DB_PATH || '/data/app.db'}`);
+    console.log(`Data directory: ${DATA_DIR}`);
     
+    // Ensure data and uploads directories exist
+    const uploadsDir = path.join(DATA_DIR, 'uploads');
+    await fsPromises.mkdir(uploadsDir, { recursive: true });
+    console.log('Uploads directory ready at', uploadsDir);
+    
+    // Serve uploaded files
+    app.use('/uploads', express.static(uploadsDir));
+
     console.log('Initializing database...');
     await initializeDatabase();
     console.log('Database initialized');
@@ -36,18 +59,6 @@ app.use(cookieParser());
     await initializeAdmin();
     console.log('Admin user initialized');
 
-    // Ensure uploads directory exists
-    const uploadsDir = path.join(process.env.DATA_DIR || '/data', 'uploads');
-    try {
-      await fsPromises.mkdir(uploadsDir, { recursive: true });
-      console.log('Uploads directory ready at', uploadsDir);
-    } catch (e) {
-      console.error('Failed to ensure uploads directory:', e);
-    }
-    
-    // Serve uploaded files
-    app.use('/uploads', express.static(uploadsDir));
-    
     // API Routes
     app.use('/api/admin', adminRoutes);
     app.use('/api/lead', leadRoutes);
@@ -69,13 +80,12 @@ app.use(cookieParser());
     });
 
     // Start server
-    app.listen(PORT, () => {
+    server = app.listen(PORT, () => {
       console.log(`✓ Server running on port ${PORT}`);
       console.log(`✓ Access at http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error('Failed to start application:', error);
-    console.error('Error details:', error.message);
     process.exit(1);
   }
 })();
