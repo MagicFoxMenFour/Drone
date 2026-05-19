@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import crypto from 'node:crypto';
 import { getAsync, runAsync } from './init.js';
 
 const ADMIN_LOGIN = process.env.ADMIN_LOGIN || 'admin';

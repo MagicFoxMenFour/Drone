@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { runAsync } from '../db/init.js';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 export const leadRoutes = Router();
 

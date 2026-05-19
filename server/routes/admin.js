@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { allAsync, getAsync, runAsync } from '../db/init.js';
-import { adminAuthMiddleware, verifyAdminCredentials, createSessionToken } from '../db/auth.js';
-import { randomUUID } from 'crypto';
+import { adminAuthMiddleware, verifyAdminCredentials, createSessionToken, verifySessionToken } from '../db/auth.js';
+import { randomUUID } from 'node:crypto';
 
 export const adminRoutes = Router();
 
@@ -44,7 +44,7 @@ adminRoutes.post('/logout', (req, res) => {
 // Get current user
 adminRoutes.get('/me', (req, res) => {
   const token = req.headers.authorization?.replace('Bearer ', '') || req.cookies?.admin_session;
-  const session = require('../db/auth.js').verifySessionToken(token);
+  const session = verifySessionToken(token);
   
   if (!session) {
     return res.json({ user: null });

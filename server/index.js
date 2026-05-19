@@ -1,9 +1,11 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { initializeDatabase } from './db/init.js';
+import { initializeAdmin } from './db/auth.js';
 import { adminRoutes } from './routes/admin.js';
 import { leadRoutes } from './routes/lead.js';
 import { contentRoutes } from './routes/content.js';
@@ -17,9 +19,11 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
-// Initialize database
+// Initialize database and admin user
 await initializeDatabase();
+await initializeAdmin();
 
 // API Routes
 app.use('/api/admin', adminRoutes);
