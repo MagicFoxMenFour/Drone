@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import path from 'path';
+import fsPromises from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { initializeDatabase } from './db/init.js';
 import { initializeAdmin } from './db/auth.js';
@@ -34,6 +35,15 @@ app.use(cookieParser());
     console.log('Initializing admin user...');
     await initializeAdmin();
     console.log('Admin user initialized');
+
+    // Ensure uploads directory exists
+    const uploadsDir = path.join(process.env.DATA_DIR || '/data', 'uploads');
+    try {
+      await fsPromises.mkdir(uploadsDir, { recursive: true });
+      console.log('Uploads directory ready at', uploadsDir);
+    } catch (e) {
+      console.error('Failed to ensure uploads directory:', e);
+    }
     
     // API Routes
     app.use('/api/admin', adminRoutes);
