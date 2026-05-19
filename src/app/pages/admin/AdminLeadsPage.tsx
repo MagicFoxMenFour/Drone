@@ -66,38 +66,40 @@ export function AdminLeadsPage() {
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.id} className="border-b border-slate-100 align-top">
-                <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
-                  {new Date(r.created_at).toLocaleString("ru-RU")}
-                </td>
-                <td className="px-4 py-3 font-bold text-slate-950">{r.name}</td>
-                <td className="px-4 py-3">
-                  <div className="text-slate-700">{r.phone || "—"}</div>
-                  <div className="text-slate-500 text-xs break-all">{r.email || ""}</div>
-                </td>
-                <td className="px-4 py-3 text-slate-700 max-w-[200px] break-words">{r.service || "—"}</td>
-                <td className="px-4 py-3">
-                  <select
-                    value={r.status}
-                    onChange={(e) => setStatus(r.id, e.target.value)}
-                    className="border border-slate-200 px-2 py-1 text-xs font-bold text-slate-900"
-                  >
-                    {statuses.map((s) => (
-                      <option key={s.key} value={s.key}>
-                        {s.label}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <button type="button" onClick={() => remove(r.id)} className="text-xs font-bold text-red-600 hover:underline">
-                    Удалить
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td colSpan={6} className="px-4 pb-4 text-slate-600 text-sm">{r.message}</td>
-              </tr>
+              <>
+                <tr key={`${r.id}-main`} className="border-b border-slate-100 align-top">
+                  <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
+                    {new Date(r.created_at).toLocaleString("ru-RU")}
+                  </td>
+                  <td className="px-4 py-3 font-bold text-slate-950">{r.name}</td>
+                  <td className="px-4 py-3">
+                    <div className="text-slate-700">{r.phone || "—"}</div>
+                    <div className="text-slate-500 text-xs break-all">{r.email || ""}</div>
+                  </td>
+                  <td className="px-4 py-3 text-slate-700 max-w-[200px] break-words">{r.service || "—"}</td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={r.status}
+                      onChange={(e) => setStatus(r.id, e.target.value)}
+                      className="border border-slate-200 px-2 py-1 text-xs font-bold text-slate-900"
+                    >
+                      {statuses.map((s) => (
+                        <option key={s.key} value={s.key}>
+                          {s.label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button type="button" onClick={() => remove(r.id)} className="text-xs font-bold text-red-600 hover:underline">
+                      Удалить
+                    </button>
+                  </td>
+                </tr>
+                <tr key={`${r.id}-msg`}>
+                  <td colSpan={6} className="px-4 pb-4 text-slate-600 text-sm">{r.message}</td>
+                </tr>
+              </>
             ))}
           </tbody>
         </table>
