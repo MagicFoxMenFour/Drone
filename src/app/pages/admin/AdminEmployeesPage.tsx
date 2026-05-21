@@ -63,7 +63,7 @@ export function AdminEmployeesPage() {
         bio: "",
         initials: "?",
         color: "bg-slate-600",
-        active: true,
+        active: false,
         sort: rows.length,
       });
       void load();
@@ -72,10 +72,23 @@ export function AdminEmployeesPage() {
     }
   }
 
-  async function updateField(id: string, patch: Partial<EmployeeRow>) {
+  function updateField(id: string, patch: Partial<EmployeeRow>) {
+    setRows((prev) => prev.map((row) => (row.id === id ? { ...row, ...patch } : row)));
+  }
+
+  async function saveRow(row: EmployeeRow) {
     setErr(null);
     try {
-      await patchAdminRow("employees", id, patch);
+      await patchAdminRow("employees", row.id, {
+        name: row.name,
+        role: row.role,
+        bio: row.bio,
+        image: row.image,
+        initials: row.initials,
+        color: row.color,
+        active: row.active,
+        sort: row.sort,
+      });
       void load();
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Ошибка сохранения");
@@ -121,7 +134,7 @@ export function AdminEmployeesPage() {
           <button
             type="button"
             onClick={seedTeam}
-            className="px-4 py-2 border border-slate-200 bg-white text-sm font-bold rounded-full hover:border-blue-300"
+            className="px-4 py-2 border border-slate-200 bg-white text-slate-700 text-sm font-bold rounded-full hover:border-blue-300"
           >
             Заполнить из шаблона
           </button>
@@ -140,16 +153,16 @@ export function AdminEmployeesPage() {
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">ФИО</span>
                 <input
                   className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
-                  defaultValue={r.name}
-                  onBlur={(e) => e.target.value !== r.name && updateField(r.id, { name: e.target.value })}
+                  value={r.name}
+                  onChange={(e) => updateField(r.id, { name: e.target.value })}
                 />
               </label>
               <label className="block">
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Инициалы</span>
                 <input
                   className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
-                  defaultValue={r.initials}
-                  onBlur={(e) => e.target.value !== r.initials && updateField(r.id, { initials: e.target.value })}
+                  value={r.initials}
+                  onChange={(e) => updateField(r.id, { initials: e.target.value })}
                 />
               </label>
             </div>
@@ -158,8 +171,8 @@ export function AdminEmployeesPage() {
               <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Должность</span>
               <input
                 className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
-                defaultValue={r.role}
-                onBlur={(e) => e.target.value !== r.role && updateField(r.id, { role: e.target.value })}
+                value={r.role}
+                onChange={(e) => updateField(r.id, { role: e.target.value })}
               />
             </label>
 
@@ -167,8 +180,8 @@ export function AdminEmployeesPage() {
               <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Биография</span>
               <textarea
                 className="mt-2 w-full border border-slate-200 px-3 py-2 min-h-[100px] text-slate-900"
-                defaultValue={r.bio}
-                onBlur={(e) => e.target.value !== r.bio && updateField(r.id, { bio: e.target.value })}
+                value={r.bio}
+                onChange={(e) => updateField(r.id, { bio: e.target.value })}
               />
             </label>
 
@@ -229,23 +242,30 @@ export function AdminEmployeesPage() {
                 <input
                   type="number"
                   className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
-                  defaultValue={r.sort}
-                  onBlur={(e) => {
+                  value={r.sort}
+                  onChange={(e) => {
                     const n = Number(e.target.value);
-                    if (!Number.isNaN(n) && n !== r.sort) updateField(r.id, { sort: n });
+                    if (!Number.isNaN(n)) updateField(r.id, { sort: n });
                   }}
                 />
               </label>
               <label className="flex items-center gap-2 pb-2">
                 <input
                   type="checkbox"
-                  defaultChecked={r.active}
+                  checked={r.active}
                   onChange={(e) => updateField(r.id, { active: e.target.checked })}
                   className="accent-blue-600"
                 />
                 <span className="text-sm font-bold text-slate-700">Активен на сайте</span>
               </label>
             </div>
+            <button
+              type="button"
+              onClick={() => saveRow(r)}
+              className="px-5 py-2.5 bg-slate-900 text-white rounded-full text-sm font-bold hover:bg-blue-600"
+            >
+              Сохранить изменения
+            </button>
             <button type="button" onClick={() => remove(r.id)} className="text-sm font-bold text-red-600 hover:underline">
               Удалить
             </button>

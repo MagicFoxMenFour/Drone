@@ -116,9 +116,13 @@ export function AboutPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {content.team.map((member, i) => (
               <div key={i} className="border border-slate-100 p-8">
-                <div className={`w-16 h-16 rounded-full ${member.color} flex items-center justify-center text-white text-xl font-bold mb-6`}>
-                  {member.initials}
-                </div>
+                {member.image ? (
+                  <img src={member.image} alt={member.name} className="w-16 h-16 rounded-full object-cover border border-slate-200 mb-6" />
+                ) : (
+                  <div className={`w-16 h-16 rounded-full ${member.color} flex items-center justify-center text-white text-xl font-bold mb-6`}>
+                    {member.initials}
+                  </div>
+                )}
                 <h3 className="text-xl font-bold text-slate-950 mb-1">{member.name}</h3>
                 <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-4">{member.role}</p>
                 <p className="text-slate-500 font-medium text-sm leading-relaxed">{member.bio}</p>

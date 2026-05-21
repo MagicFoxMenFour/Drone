@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { deleteAdminRow, getAdminRow, patchAdminRow } from "../../lib/adminApi";
 import type { ServiceRow } from "../../lib/api/types";
+import { makeSlug } from "../../lib/slug";
 
 const SERVICE_COLORS = [
   { label: "Бирюзовый", value: "cyan" },
@@ -68,8 +69,9 @@ export function AdminServiceEditPage() {
     setErr(null);
     try {
       const industries = industriesText.split(",").map((s) => s.trim()).filter(Boolean);
+      const resolvedSlug = makeSlug(row.slug || row.title, "service");
       await patchAdminRow("services", id, {
-        slug: row.slug,
+        slug: resolvedSlug,
         title: row.title,
         short_desc: row.short_desc,
         full_desc: row.full_desc,

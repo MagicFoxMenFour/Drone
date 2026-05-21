@@ -2,6 +2,7 @@ import type { BlogPost, Section } from "../data/blogPosts";
 import type { Case } from "../data/cases";
 import type { Service } from "../data/services";
 import type { BlogPostRow, CaseRow, ServiceRow } from "./api/types";
+import { makeSlug } from "./slug";
 
 function asStringArray(v: unknown): string[] {
   if (!Array.isArray(v)) return [];
@@ -51,49 +52,52 @@ function asSections(v: unknown): Section[] {
 }
 
 export function serviceRowToService(row: ServiceRow): Service {
+  const fallbackTitle = row.title || (row as ServiceRow & { name?: string }).name || "";
   return {
-    slug: row.slug,
-    title: row.title,
-    shortDesc: row.short_desc,
-    fullDesc: row.full_desc,
-    icon: row.icon,
-    color: row.color,
+    slug: row.slug || makeSlug(fallbackTitle, "service"),
+    title: row.title || fallbackTitle,
+    shortDesc: row.short_desc || ((row as ServiceRow & { description?: string }).description ?? ""),
+    fullDesc: row.full_desc || ((row as ServiceRow & { description?: string }).description ?? ""),
+    icon: row.icon || "📦",
+    color: row.color || "cyan",
     useCases: asStringArray(row.use_cases),
     process: asProcess(row.process),
     results: asResultPairs(row.results),
     industries: Array.isArray(row.industries) ? row.industries.map(String) : [],
-    price: row.price,
+    price: row.price || "",
   };
 }
 
 export function caseRowToCase(row: CaseRow): Case {
+  const fallbackTitle = row.title || "";
   return {
-    slug: row.slug,
-    category: row.category,
-    title: row.title,
-    client: row.client,
-    location: row.location,
-    year: row.year,
-    shortDesc: row.short_desc,
-    challenge: row.challenge,
-    solution: row.solution,
+    slug: row.slug || makeSlug(fallbackTitle, "case"),
+    category: row.category || "",
+    title: fallbackTitle,
+    client: row.client || "",
+    location: row.location || "",
+    year: row.year || "",
+    shortDesc: row.short_desc || ((row as CaseRow & { description?: string }).description ?? ""),
+    challenge: row.challenge || "",
+    solution: row.solution || "",
     results: asResultPairs(row.results),
     tags: Array.isArray(row.tags) ? row.tags.map(String) : [],
-    gradient: row.gradient,
-    accentColor: row.accent_color,
+    gradient: row.gradient || "from-slate-900 via-blue-950 to-slate-900",
+    accentColor: row.accent_color || "blue",
   };
 }
 
 export function blogRowToPost(row: BlogPostRow): BlogPost {
+  const fallbackTitle = row.title || "";
   return {
-    slug: row.slug,
-    category: row.category,
-    date: row.date,
-    readTime: row.read_time,
-    title: row.title,
-    excerpt: row.excerpt,
+    slug: row.slug || makeSlug(fallbackTitle, "post"),
+    category: row.category || "Раздел",
+    date: row.date || "",
+    readTime: row.read_time || "5 мин",
+    title: fallbackTitle,
+    excerpt: row.excerpt || "",
     tags: Array.isArray(row.tags) ? row.tags.map(String) : [],
-    accent: row.accent,
+    accent: row.accent || "bg-blue-600",
     content: asSections(row.content),
   };
 }

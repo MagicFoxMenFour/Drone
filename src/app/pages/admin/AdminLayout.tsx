@@ -40,9 +40,7 @@ export function AdminLayout() {
     return (
       <div className="min-h-screen bg-slate-50">
         <div className="max-w-[1200px] mx-auto px-8 py-10">
-          <div className="text-sm font-bold text-slate-500 uppercase tracking-widest">
-            Admin
-          </div>
+          <div className="text-sm font-bold text-slate-500 uppercase tracking-widest">Citrix</div>
           <div className="mt-6 text-slate-700 font-medium">Загрузка…</div>
         </div>
       </div>
@@ -69,9 +67,7 @@ export function AdminLayout() {
     <div className="min-h-screen bg-slate-50">
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
         <div className="max-w-[1200px] mx-auto px-8 py-4 flex items-center justify-between gap-6">
-          <Link to="/admin" className="font-bold text-slate-950 tracking-tight">
-            Admin Panel
-          </Link>
+          <Link to="/admin" className="font-bold text-slate-950 tracking-tight">Citrix</Link>
           <nav className="flex flex-wrap items-center gap-4 text-sm font-bold">
             <Link className="text-slate-600 hover:text-slate-950" to="/admin/services">
               Услуги
@@ -112,4 +108,3 @@ export function AdminLayout() {
     </div>
   );
 }
-

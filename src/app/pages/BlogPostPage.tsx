@@ -2,16 +2,17 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router";
 import type { BlogPost, Section } from "../data/blogPosts";
 import { getBlogList, getBlogPostForSlug } from "../lib/content";
+import { formatRuDate } from "../lib/date";
 import { NotFoundPage } from "./NotFoundPage";
 
 function renderSection(s: Section, i: number) {
   switch (s.type) {
     case "h2":
-      return <h2 key={i} className="text-3xl font-bold text-slate-950 tracking-tight mt-12 mb-5">{s.text}</h2>;
+      return <h2 key={i} className="text-3xl font-bold text-slate-950 tracking-tight mt-12 mb-5 whitespace-pre-line">{s.text}</h2>;
     case "h3":
-      return <h3 key={i} className="text-2xl font-bold text-slate-950 tracking-tight mt-8 mb-4">{s.text}</h3>;
+      return <h3 key={i} className="text-2xl font-bold text-slate-950 tracking-tight mt-8 mb-4 whitespace-pre-line">{s.text}</h3>;
     case "p":
-      return <p key={i} className="text-lg text-slate-600 font-medium leading-relaxed mb-5">{s.text}</p>;
+      return <p key={i} className="text-lg text-slate-600 font-medium leading-relaxed mb-5 whitespace-pre-line">{s.text}</p>;
     case "ul":
       return (
         <ul key={i} className="mb-6 space-y-3">
@@ -39,8 +40,16 @@ function renderSection(s: Section, i: number) {
     case "tip":
       return (
         <div key={i} className="my-8 bg-blue-50 border-l-4 border-blue-600 px-6 py-5">
-          <p className="text-blue-900 font-medium leading-relaxed">{s.text}</p>
+          <p className="text-blue-900 font-medium leading-relaxed whitespace-pre-line">{s.text}</p>
         </div>
+      );
+    case "img":
+      if (!s.src) return null;
+      return (
+        <figure key={i} className="my-8">
+          <img src={s.src} alt={s.alt || ""} className="w-full max-h-[640px] object-cover border border-slate-200" />
+          {s.alt ? <figcaption className="mt-3 text-sm text-slate-500">{s.alt}</figcaption> : null}
+        </figure>
       );
     case "table":
       return (
@@ -119,7 +128,7 @@ export function BlogPostPage() {
             {post.title}
           </h1>
           <div className="flex flex-wrap gap-6 text-sm text-slate-400 font-bold">
-            <span>{post.date}</span>
+            <span>{formatRuDate(post.date)}</span>
             <span>·</span>
             <span>{post.readTime} чтения</span>
             <span>·</span>
@@ -143,7 +152,7 @@ export function BlogPostPage() {
             {/* Main content */}
             <div className="lg:col-span-2">
               {/* Lead */}
-              <p className="text-xl text-slate-500 font-medium leading-relaxed mb-8 border-l-4 border-blue-600 pl-6">
+              <p className="text-xl text-slate-500 font-medium leading-relaxed whitespace-pre-line mb-8 border-l-4 border-blue-600 pl-6">
                 {post.excerpt}
               </p>
               {/* Sections */}

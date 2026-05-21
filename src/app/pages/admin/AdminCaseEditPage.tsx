@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { deleteAdminRow, getAdminRow, patchAdminRow } from "../../lib/adminApi";
 import type { CaseRow } from "../../lib/api/types";
+import { makeSlug } from "../../lib/slug";
 
 type ResultPair = { v: string; l: string };
 
@@ -72,8 +73,9 @@ export function AdminCaseEditPage() {
     setErr(null);
     try {
       const tags = tagsText.split(",").map((s) => s.trim()).filter(Boolean);
+      const resolvedSlug = makeSlug(row.slug || row.title, "case");
       await patchAdminRow("cases", id, {
-        slug: row.slug,
+        slug: resolvedSlug,
         category: row.category,
         title: row.title,
         client: row.client,

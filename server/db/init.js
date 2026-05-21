@@ -239,6 +239,33 @@ export async function initializeDatabase() {
     }
   }
 
+  function slugify(source, fallbackPrefix) {
+    const translitMap = {
+      а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i',
+      й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't',
+      у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'sch', ъ: '', ы: 'y', ь: '',
+      э: 'e', ю: 'yu', я: 'ya',
+    };
+    const normalized = String(source || '')
+      .trim()
+      .toLowerCase()
+      .split('')
+      .map((char) => translitMap[char] ?? char)
+      .join('')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    return normalized || `${fallbackPrefix}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  async function runMigration(query, params = []) {
+    return new Promise((resolve, reject) => {
+      db.run(query, params, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+  }
+
   /* services: add missing columns */
   await addCol('services', 'slug', 'TEXT');
   await addCol('services', 'title', 'TEXT NOT NULL DEFAULT \'Новая услуга\'');
@@ -250,15 +277,21 @@ export async function initializeDatabase() {
   await addCol('services', 'process', 'TEXT DEFAULT \'[]\'');
   await addCol('services', 'results', 'TEXT DEFAULT \'[]\'');
   await addCol('services', 'industries', 'TEXT DEFAULT \'[]\'');
+  await addCol('services', 'price', 'TEXT DEFAULT \'\'');
+  await addCol('services', 'updated_at', 'TEXT DEFAULT CURRENT_TIMESTAMP');
 
   /* blog_posts: add missing columns */
+  await addCol('blog_posts', 'slug', 'TEXT');
   await addCol('blog_posts', 'category', 'TEXT DEFAULT \'\'');
   await addCol('blog_posts', 'date', 'TEXT DEFAULT \'\'');
   await addCol('blog_posts', 'read_time', 'TEXT DEFAULT \'\'');
   await addCol('blog_posts', 'tags', 'TEXT DEFAULT \'[]\'');
   await addCol('blog_posts', 'accent', 'TEXT DEFAULT \'\'');
+  await addCol('blog_posts', 'updated_at', 'TEXT DEFAULT CURRENT_TIMESTAMP');
 
   /* cases: add missing columns */
+  await addCol('cases', 'slug', 'TEXT');
+  await addCol('cases', 'title', 'TEXT NOT NULL DEFAULT \'Новый кейс\'');
   await addCol('cases', 'category', 'TEXT DEFAULT \'\'');
   await addCol('cases', 'client', 'TEXT DEFAULT \'\'');
   await addCol('cases', 'location', 'TEXT DEFAULT \'\'');
@@ -270,6 +303,7 @@ export async function initializeDatabase() {
   await addCol('cases', 'tags', 'TEXT DEFAULT \'[]\'');
   await addCol('cases', 'gradient', 'TEXT DEFAULT \'\'');
   await addCol('cases', 'accent_color', 'TEXT DEFAULT \'\'');
+  await addCol('cases', 'updated_at', 'TEXT DEFAULT CURRENT_TIMESTAMP');
 
   /* about_page: migrate old schema to new */
   await addCol('about_page', 'hero_title', 'TEXT DEFAULT \'\'');
@@ -279,6 +313,33 @@ export async function initializeDatabase() {
   await addCol('about_page', 'principles', 'TEXT DEFAULT \'[]\'');
   await addCol('about_page', 'partners', 'TEXT DEFAULT \'[]\'');
   await addCol('about_page', 'licenses', 'TEXT DEFAULT \'[]\'');
+  await addCol('about_page', 'updated_at', 'TEXT DEFAULT CURRENT_TIMESTAMP');
+
+  await runMigration(`UPDATE services SET title = COALESCE(NULLIF(title, ''), NULLIF(name, ''), 'Новая услуга')`);
+  await runMigration(`UPDATE services SET short_desc = COALESCE(NULLIF(short_desc, ''), NULLIF(description, ''), '')`);
+  await runMigration(`UPDATE services SET full_desc = COALESCE(NULLIF(full_desc, ''), NULLIF(description, ''), '')`);
+  await runMigration(`UPDATE cases SET short_desc = COALESCE(NULLIF(short_desc, ''), NULLIF(description, ''), '')`);
+  await runMigration(`UPDATE about_page SET hero_title = COALESCE(NULLIF(hero_title, ''), NULLIF(title, ''), '')`);
+  await runMigration(`UPDATE about_page SET hero_text = COALESCE(NULLIF(hero_text, ''), NULLIF(description, ''), '')`);
+  await runMigration(`UPDATE about_page SET mission_text = COALESCE(NULLIF(mission_text, ''), NULLIF(mission, ''), '')`);
+
+  const servicesForSlug = await allAsync(`SELECT id, slug, title, name FROM services`);
+  for (const row of servicesForSlug) {
+    if (row.slug && String(row.slug).trim()) continue;
+    await runMigration(`UPDATE services SET slug = ? WHERE id = ?`, [slugify(row.title || row.name, 'service'), row.id]);
+  }
+
+  const casesForSlug = await allAsync(`SELECT id, slug, title FROM cases`);
+  for (const row of casesForSlug) {
+    if (row.slug && String(row.slug).trim()) continue;
+    await runMigration(`UPDATE cases SET slug = ? WHERE id = ?`, [slugify(row.title, 'case'), row.id]);
+  }
+
+  const blogForSlug = await allAsync(`SELECT id, slug, title FROM blog_posts`);
+  for (const row of blogForSlug) {
+    if (row.slug && String(row.slug).trim()) continue;
+    await runMigration(`UPDATE blog_posts SET slug = ? WHERE id = ?`, [slugify(row.title, 'post'), row.id]);
+  }
 
   console.log('✓ Migrations complete');
 }

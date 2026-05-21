@@ -26,7 +26,7 @@ export function AdminLoginPage() {
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-6">
       <div className="w-full max-w-md bg-white p-10">
         <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3">
-          Admin Panel
+          Citrix
         </p>
         <h1 className="text-3xl font-bold text-slate-950 tracking-tight mb-8">
           Вход
@@ -83,4 +83,3 @@ export function AdminLoginPage() {
     </div>
   );
 }
-

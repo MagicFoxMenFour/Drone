@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { deleteAdminRow, getAdminRow, patchAdminRow } from "../../lib/adminApi";
 import type { BlogPostRow } from "../../lib/api/types";
+import { makeSlug } from "../../lib/slug";
 
 const COLORS = [
   { label: "Синий", value: "bg-blue-600" },
@@ -43,6 +44,16 @@ export function AdminBlogEditPage() {
   const [err, setErr] = useState<string | null>(null);
   const [blocks, setBlocks] = useState<ContentBlock[]>([]);
   const [tagsText, setTagsText] = useState("");
+  const [dateValue, setDateValue] = useState("");
+  const [uploadingBlock, setUploadingBlock] = useState<number | null>(null);
+
+  function parseDateForInput(value: string): string {
+    const trimmed = value.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+    const parsed = Date.parse(trimmed);
+    if (Number.isNaN(parsed)) return "";
+    return new Date(parsed).toISOString().slice(0, 10);
+  }
 
   useEffect(() => {
     if (!id) return;
@@ -51,6 +62,7 @@ export function AdminBlogEditPage() {
         setRow(r);
         setBlocks(parseContent(r.content));
         setTagsText((r.tags ?? []).join(", "));
+        setDateValue(parseDateForInput(r.date));
       })
       .catch((e) => {
         setErr(e instanceof Error ? e.message : "Ошибка загрузки");
@@ -90,16 +102,38 @@ export function AdminBlogEditPage() {
     updateBlockItems(blockIdx, items);
   }
 
+  async function uploadBlockImage(blockIndex: number, file: File) {
+    setErr(null);
+    setUploadingBlock(blockIndex);
+    try {
+      const form = new FormData();
+      form.append("image", file);
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: form,
+        credentials: "include",
+      });
+      const json = (await res.json().catch(() => ({}))) as { error?: string; url?: string };
+      if (!res.ok || !json.url) throw new Error(json.error || "Ошибка загрузки изображения");
+      updateBlock(blockIndex, { src: json.url });
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Ошибка загрузки изображения");
+    } finally {
+      setUploadingBlock(null);
+    }
+  }
+
   async function onSave(e: FormEvent) {
     e.preventDefault();
     if (!id || !row) return;
     setErr(null);
     try {
       const tags = tagsText.split(",").map((s) => s.trim()).filter(Boolean);
+      const resolvedSlug = makeSlug(row.slug || row.title, "post");
       await patchAdminRow("blog_posts", id, {
-        slug: row.slug,
+        slug: resolvedSlug,
         category: row.category,
-        date: row.date,
+        date: dateValue || row.date,
         read_time: row.read_time,
         title: row.title,
         excerpt: row.excerpt,
@@ -167,10 +201,10 @@ export function AdminBlogEditPage() {
           <label className="block">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Дата</span>
             <input
+              type="date"
               className="mt-2 w-full border border-slate-200 px-3 py-2 text-slate-900"
-              value={row.date}
-              onChange={(e) => setRow({ ...row, date: e.target.value })}
-              placeholder="21 марта 2026"
+              value={dateValue}
+              onChange={(e) => setDateValue(e.target.value)}
             />
           </label>
           <label className="block">
@@ -250,13 +284,36 @@ export function AdminBlogEditPage() {
                   />
                 )}
                 {block.type === "img" && (
-                  <div className="grid sm:grid-cols-2 gap-2">
-                    <input
-                      className="border border-slate-200 px-3 py-2 text-slate-900"
-                      value={block.src || ""}
-                      onChange={(e) => updateBlock(i, { src: e.target.value })}
-                      placeholder="URL изображения"
-                    />
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap gap-2">
+                      <label className="cursor-pointer px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-50">
+                        {uploadingBlock === i ? "Загрузка..." : "Прикрепить изображение"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          disabled={uploadingBlock === i}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) await uploadBlockImage(i, file);
+                            e.currentTarget.value = "";
+                          }}
+                        />
+                      </label>
+                      <input
+                        className="flex-1 min-w-[220px] border border-slate-200 px-3 py-2 text-slate-900"
+                        value={block.src || ""}
+                        onChange={(e) => updateBlock(i, { src: e.target.value })}
+                        placeholder="Или вставьте URL изображения"
+                      />
+                    </div>
+                    {block.src ? (
+                      <img
+                        src={block.src}
+                        alt={block.alt || ""}
+                        className="max-h-44 w-auto border border-slate-200 rounded bg-white"
+                      />
+                    ) : null}
                     <input
                       className="border border-slate-200 px-3 py-2 text-slate-900"
                       value={block.alt || ""}

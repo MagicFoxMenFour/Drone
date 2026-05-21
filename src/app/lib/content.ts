@@ -149,7 +149,29 @@ function teamFromEmployees(rows: EmployeeRow[]): TeamMember[] {
       color: e.color,
     }));
   }
-  return rows.map((r) => ({
+  const seen = new Set<string>();
+  const normalized = rows.filter((r) => {
+    const name = r.name?.trim() ?? "";
+    const key = name.toLowerCase();
+    if (!name || seen.has(key)) return false;
+    const hasProfile = Boolean((r.role || "").trim() || (r.bio || "").trim() || (r.image || "").trim());
+    if (!hasProfile) return false;
+    if (name.toLowerCase() === "новый сотрудник") return false;
+    seen.add(key);
+    return true;
+  });
+
+  if (normalized.length === 0) {
+    return defaultEmployeesSeed.map((e) => ({
+      name: e.name,
+      role: e.role,
+      bio: e.bio,
+      initials: e.initials,
+      color: e.color,
+    }));
+  }
+
+  return normalized.map((r) => ({
     name: r.name,
     role: r.role,
     bio: r.bio,

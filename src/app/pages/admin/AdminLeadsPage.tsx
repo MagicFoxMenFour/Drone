@@ -60,14 +60,14 @@ export function AdminLeadsPage() {
               <th className="text-left px-4 py-3 font-bold text-slate-500">Имя</th>
               <th className="text-left px-4 py-3 font-bold text-slate-500">Контакты</th>
               <th className="text-left px-4 py-3 font-bold text-slate-500">Услуга</th>
+              <th className="text-left px-4 py-3 font-bold text-slate-500">Сообщение</th>
               <th className="text-left px-4 py-3 font-bold text-slate-500">Статус</th>
               <th className="text-right px-4 py-3 font-bold text-slate-500"> </th>
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => (
-              <>
-                <tr key={`${r.id}-main`} className="border-b border-slate-100 align-top">
+                <tr key={r.id} className="border-b border-slate-100 align-top">
                   <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
                     {new Date(r.created_at).toLocaleString("ru-RU")}
                   </td>
@@ -77,6 +77,9 @@ export function AdminLeadsPage() {
                     <div className="text-slate-500 text-xs break-all">{r.email || ""}</div>
                   </td>
                   <td className="px-4 py-3 text-slate-700 max-w-[200px] break-words">{r.service || "—"}</td>
+                  <td className="px-4 py-3 text-slate-600 max-w-[260px] break-words whitespace-pre-line">
+                    {r.message || "—"}
+                  </td>
                   <td className="px-4 py-3">
                     <select
                       value={r.status}
@@ -96,10 +99,6 @@ export function AdminLeadsPage() {
                     </button>
                   </td>
                 </tr>
-                <tr key={`${r.id}-msg`}>
-                  <td colSpan={6} className="px-4 pb-4 text-slate-600 text-sm">{r.message}</td>
-                </tr>
-              </>
             ))}
           </tbody>
         </table>

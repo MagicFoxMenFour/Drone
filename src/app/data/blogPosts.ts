@@ -11,11 +11,13 @@ export interface BlogPost {
 }
 
 export interface Section {
-  type: "h2" | "h3" | "p" | "ul" | "ol" | "tip" | "table";
+  type: "h2" | "h3" | "p" | "ul" | "ol" | "tip" | "table" | "img";
   text?: string;
   items?: string[];
   rows?: string[][];
   header?: string[];
+  src?: string;
+  alt?: string;
 }
 
 export const blogPosts: BlogPost[] = [

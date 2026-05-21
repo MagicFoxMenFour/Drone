@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import type { BlogPost } from "../data/blogPosts";
 import { getBlogList } from "../lib/content";
+import { formatRuDate } from "../lib/date";
 
 export function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -67,13 +68,13 @@ export function BlogPage() {
                 <div className="p-10 lg:p-14 flex flex-col justify-center">
                   <div className="flex items-center gap-4 mb-6">
                     <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">{featured.category}</span>
-                    <span className="text-xs text-slate-400 font-medium">{featured.date}</span>
+                    <span className="text-xs text-slate-400 font-medium">{formatRuDate(featured.date)}</span>
                     <span className="text-xs text-slate-400 font-medium">{featured.readTime} чтения</span>
                   </div>
                   <h2 className="text-3xl lg:text-4xl font-bold text-slate-950 tracking-tight mb-5 group-hover:text-blue-600 transition-colors leading-snug">
                     {featured.title}
                   </h2>
-                  <p className="text-slate-500 font-medium leading-relaxed mb-6">{featured.excerpt}</p>
+                  <p className="text-slate-500 font-medium leading-relaxed whitespace-pre-line mb-6">{featured.excerpt}</p>
                   <div className="flex flex-wrap gap-2 mb-6">
                     {featured.tags.map((t) => (
                       <span key={t} className="text-xs font-bold bg-slate-50 border border-slate-200 px-3 py-1 rounded-full text-slate-500">{t}</span>
@@ -107,14 +108,14 @@ export function BlogPage() {
                   <h3 className="text-xl font-bold text-slate-950 tracking-tight mb-3 group-hover:text-blue-600 transition-colors leading-snug">
                     {post.title}
                   </h3>
-                  <p className="text-slate-500 font-medium text-sm leading-relaxed mb-5">{post.excerpt}</p>
+                  <p className="text-slate-500 font-medium text-sm leading-relaxed whitespace-pre-line mb-5">{post.excerpt}</p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {post.tags.map((t) => (
                       <span key={t} className="text-xs font-bold bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full text-slate-400">{t}</span>
                     ))}
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-400 font-medium">{post.date}</span>
+                    <span className="text-xs text-slate-400 font-medium">{formatRuDate(post.date)}</span>
                     <span className="text-xs font-bold text-blue-600 group-hover:underline">Читать →</span>
                   </div>
                 </div>
