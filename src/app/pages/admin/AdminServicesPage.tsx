@@ -13,7 +13,7 @@ export function AdminServicesPage() {
     try {
       setRows(await listAdminRows("services"));
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё");
+      setErr(e instanceof Error ? e.message : "Ошибка загрузки");
     }
   }
 
@@ -27,10 +27,10 @@ export function AdminServicesPage() {
     try {
       const data = await createAdminRow("services", {
         slug,
-        title: "РќРѕРІР°СЏ СѓСЃР»СѓРіР°",
+        title: "Новая услуга",
         short_desc: "",
         full_desc: "",
-        icon: "рџ“¦",
+        icon: "💼",
         color: "cyan",
         use_cases: [],
         process: [],
@@ -41,7 +41,7 @@ export function AdminServicesPage() {
       });
       navigate(`/admin/services/${data.id}`);
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "РћС€РёР±РєР° СЃРѕР·РґР°РЅРёСЏ");
+      setErr(e instanceof Error ? e.message : "Ошибка создания");
     }
   }
 
@@ -49,15 +49,15 @@ export function AdminServicesPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-950 tracking-tight">РЈСЃР»СѓРіРё</h1>
-          <p className="text-slate-500 font-medium mt-1">Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РєР°СЂС‚РѕС‡РµРє СѓСЃР»СѓРі РЅР° СЃР°Р№С‚Рµ.</p>
+          <h1 className="text-3xl font-bold text-slate-950 tracking-tight">Услуги</h1>
+          <p className="text-slate-500 font-medium mt-1">Редактирование карточек услуг на сайте.</p>
         </div>
         <button
           type="button"
           onClick={createNew}
           className="px-6 py-3 bg-blue-600 text-white rounded-full text-sm font-bold hover:bg-blue-500"
         >
-          Р”РѕР±Р°РІРёС‚СЊ
+          Добавить
         </button>
       </div>
 
@@ -69,9 +69,9 @@ export function AdminServicesPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="text-left px-4 py-3 font-bold text-slate-500">РќР°Р·РІР°РЅРёРµ</th>
+              <th className="text-left px-4 py-3 font-bold text-slate-500">Название</th>
               <th className="text-left px-4 py-3 font-bold text-slate-500">Slug</th>
-              <th className="text-left px-4 py-3 font-bold text-slate-500">РћРїСѓР±Р»РёРєРѕРІР°РЅРѕ</th>
+              <th className="text-left px-4 py-3 font-bold text-slate-500">Опубликовано</th>
               <th className="text-right px-4 py-3 font-bold text-slate-500"> </th>
             </tr>
           </thead>
@@ -83,7 +83,7 @@ export function AdminServicesPage() {
                 <td className="px-4 py-3 text-slate-700 font-medium">{r.published ? "да" : "нет"}</td>
                 <td className="px-4 py-3 text-right">
                   <Link className="font-bold text-blue-600 hover:underline" to={`/admin/services/${r.id}`}>
-                    РР·РјРµРЅРёС‚СЊ
+                    Изменить
                   </Link>
                 </td>
               </tr>
