@@ -11,8 +11,8 @@ const faqs = [
 ];
 
 
-const MAP_LAT = 45.0371;
-const MAP_LNG = 41.9504;
+const MAP_LAT = 45.04111;
+const MAP_LNG = 41.90970;
 
 export function ContactsPage() {
   const [form, setForm] = useState({ name: "", phone: "", email: "", service: "", message: "" });
